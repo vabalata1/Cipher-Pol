@@ -68,4 +68,14 @@
   setInterval(() => {
     boxes.forEach(b => loadBox(b.getAttribute('data-peer')));
   }, 4000);
+
+  // attach confirm handler for clear-all form under CSP
+  const clearForm = document.querySelector('form.dm-clear-all');
+  if (clearForm) {
+    clearForm.addEventListener('submit', (e) => {
+      if (!confirm('Effacer toutes les discussions ?')) {
+        e.preventDefault();
+      }
+    });
+  }
 })();

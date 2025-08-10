@@ -5,7 +5,7 @@
     <p class="hint">Aucun contact disponible.</p>
   <% } else { %>
     <% if (currentUser && (currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
-      <form method="post" action="/communications/clear" onsubmit="return confirm('Effacer toutes les discussions ?');" style="margin-bottom:12px;">
+      <form method="post" action="/communications/clear" class="dm-clear-all" style="margin-bottom:12px;">
         <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><% } %>
         <button class="btn btn-outline" type="submit">Effacer toutes les discussions</button>
       </form>
