@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
-const SQLiteStore = require('connect-sqlite3')(session);
 const passport = require('passport');
 const helmet = require('helmet');
 const expressLayouts = require('express-ejs-layouts');
@@ -24,6 +23,13 @@ const indexRoutes = require('./routes');
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads');
+const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
+const getSQLiteStore = () => {
+  if (DISABLE_DB) return null;
+  // Lazy require to avoid loading sqlite3 in environments without native module
+  const SQLiteStore = require('connect-sqlite3')(session);
+  return new SQLiteStore({ db: 'sessions.sqlite', dir: path.join(__dirname, '..', 'data') });
+};
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -65,7 +71,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { httpOnly: true, sameSite: 'lax' },
-    store: new SQLiteStore({ db: 'sessions.sqlite', dir: path.join(__dirname, '..', 'data') }),
+    store: getSQLiteStore() || undefined,
   })
 );
 
@@ -132,9 +138,11 @@ app.use((req, res) => {
 });
 
 const start = async () => {
-  await getDatabase();
+  if (!DISABLE_DB) {
+    await getDatabase();
+  }
   server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT} (DISABLE_DB=${DISABLE_DB})`);
   });
 };
 

@@ -3,10 +3,20 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const { getDatabase } = require('../config/database');
 
+const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
+
 module.exports = function initPassport(passportInstance) {
   passportInstance.use(
     new LocalStrategy({ usernameField: 'code', passwordField: 'password' }, async (code, password, done) => {
       try {
+        if (DISABLE_DB) {
+          // Demo user in no-DB mode
+          const demoUser = { id: 1, code: 'MR.0', role: 'agent', isAdmin: true };
+          // Accept any non-empty password for demo
+          if (!password) return done(null, false, { message: 'Password requis' });
+          if (code !== demoUser.code) return done(null, false, { message: 'Identifiants invalides' });
+          return done(null, demoUser);
+        }
         const db = await getDatabase();
         const user = await db.get('SELECT * FROM users WHERE code = ?', code);
         if (!user) return done(null, false, { message: 'Identifiants invalides' });
@@ -26,6 +36,10 @@ module.exports = function initPassport(passportInstance) {
 
   passportInstance.deserializeUser(async (id, done) => {
     try {
+      if (DISABLE_DB) {
+        const demoUser = { id: 1, code: 'MR.0', role: 'agent', isAdmin: true };
+        return done(null, demoUser);
+      }
       const db = await getDatabase();
       const user = await db.get('SELECT id, code, role, isAdmin FROM users WHERE id = ?', id);
       if (!user) return done(null, false);

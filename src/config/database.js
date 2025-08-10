@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+
+const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 if (!fs.existsSync(DATA_DIR)) {
@@ -11,7 +11,12 @@ if (!fs.existsSync(DATA_DIR)) {
 let dbPromise;
 
 async function getDatabase() {
+  if (DISABLE_DB) {
+    throw new Error('Database is disabled via DISABLE_DB');
+  }
   if (!dbPromise) {
+    const sqlite3 = require('sqlite3').verbose();
+    const { open } = require('sqlite');
     dbPromise = open({ filename: path.join(DATA_DIR, 'app.sqlite'), driver: sqlite3.Database });
     await (await dbPromise).exec(`
       PRAGMA foreign_keys = ON;
