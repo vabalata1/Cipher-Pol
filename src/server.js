@@ -49,6 +49,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Running behind a proxy (e.g., Render): trust X-Forwarded-* headers
+app.set('trust proxy', 1);
+
 // Security middlewares
 app.use(helmet());
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 200 });
