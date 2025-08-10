@@ -53,7 +53,7 @@ router.get('/messages', async (req, res) => {
       `SELECT id, fromCode, toCode, content, createdAt
        FROM direct_messages
        WHERE (fromCode = ? AND toCode = ?) OR (fromCode = ? AND toCode = ?)
-       ORDER BY datetime(createdAt) ASC`,
+       ORDER BY createdAt ASC`,
       me, peer, peer, me
     );
     res.json({ messages: rows });

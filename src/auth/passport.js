@@ -20,9 +20,11 @@ module.exports = function initPassport(passportInstance) {
         const db = await getDatabase();
         const user = await db.get('SELECT * FROM users WHERE code = ?', code);
         if (!user) return done(null, false, { message: 'Identifiants invalides' });
-        const ok = await bcrypt.compare(password, user.passwordHash);
+        const hash = user.passwordHash || user.passwordhash;
+        if (!hash) return done(null, false, { message: 'Identifiants invalides' });
+        const ok = await bcrypt.compare(password, hash);
         if (!ok) return done(null, false, { message: 'Identifiants invalides' });
-        const isAdmin = !!user.isAdmin || user.code === 'MR.0' || user.code === 'MR.1';
+        const isAdmin = !!(user.isAdmin ?? user.isadmin) || user.code === 'MR.0' || user.code === 'MR.1';
         return done(null, { id: user.id, code: user.code, role: user.role, isAdmin });
       } catch (e) {
         return done(e);
@@ -43,7 +45,7 @@ module.exports = function initPassport(passportInstance) {
       const db = await getDatabase();
       const user = await db.get('SELECT id, code, role, isAdmin FROM users WHERE id = ?', id);
       if (!user) return done(null, false);
-      const isAdmin = !!user.isAdmin || user.code === 'MR.0' || user.code === 'MR.1';
+      const isAdmin = !!(user.isAdmin ?? user.isadmin) || user.code === 'MR.0' || user.code === 'MR.1';
       done(null, { id: user.id, code: user.code, role: user.role, isAdmin });
     } catch (e) {
       done(e);

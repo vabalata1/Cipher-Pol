@@ -161,21 +161,42 @@ async function getPostgresDatabase() {
     );
   `);
 
+  const normalizeRow = (row) => {
+    if (!row) return row;
+    const map = {
+      passwordhash: 'passwordHash',
+      isadmin: 'isAdmin',
+      createdat: 'createdAt',
+      originalname: 'originalName',
+      codetag: 'codeTag',
+      uploadercode: 'uploaderCode',
+      contactcode: 'contactCode',
+      firstname: 'firstName',
+      fromcode: 'fromCode',
+      tocode: 'toCode',
+    };
+    const out = {};
+    for (const k of Object.keys(row)) {
+      const nk = map[k] || k;
+      out[nk] = row[k];
+    }
+    return out;
+  };
+
   const adapter = {
     async all(sql, ...params) {
       const { rows } = await pool.query(toPgQuery(sql), params);
-      return rows;
+      return rows.map(normalizeRow);
     },
     async get(sql, ...params) {
       const { rows } = await pool.query(toPgQuery(sql), params);
-      return rows[0] || null;
+      return normalizeRow(rows[0]) || null;
     },
     async run(sql, params) {
       await pool.query(toPgQuery(sql), Array.isArray(params) ? params : [params]);
       return { changes: 1 };
     },
     async prepare(sql) {
-      // Return a minimal stmt with run() accepting params array
       return {
         async run(...params) {
           await pool.query(toPgQuery(sql), params);
