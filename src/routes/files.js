@@ -8,7 +8,8 @@ const { getDatabase } = require('../config/database');
 
 const router = express.Router();
 
-const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'uploads'));
+const DEFAULT_PERSIST_ROOT = fs.existsSync('/var/data') ? '/var/data' : path.join(__dirname, '..', '..');
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(DEFAULT_PERSIST_ROOT, 'uploads'));
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => cb(null, uuidv4() + path.extname(file.originalname))

@@ -22,9 +22,10 @@ const fileRoutes = require('./routes/files');
 const indexRoutes = require('./routes');
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads');
+const DEFAULT_PERSIST_ROOT = fs.existsSync('/var/data') ? '/var/data' : path.join(__dirname, '..');
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(DEFAULT_PERSIST_ROOT, 'uploads'));
 const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
-const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, '..', 'data'));
+const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(DEFAULT_PERSIST_ROOT, 'data'));
 const getSQLiteStore = () => {
   if (DISABLE_DB) return null;
   // Lazy require to avoid loading sqlite3 in environments without native module
