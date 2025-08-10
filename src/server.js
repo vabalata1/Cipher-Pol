@@ -24,18 +24,18 @@ const indexRoutes = require('./routes');
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads');
 const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
+const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, '..', 'data'));
 const getSQLiteStore = () => {
   if (DISABLE_DB) return null;
   // Lazy require to avoid loading sqlite3 in environments without native module
   const SQLiteStore = require('connect-sqlite3')(session);
-  return new SQLiteStore({ db: 'sessions.sqlite', dir: path.join(__dirname, '..', 'data') });
+  return new SQLiteStore({ db: 'sessions.sqlite', dir: DATA_DIR });
 };
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
