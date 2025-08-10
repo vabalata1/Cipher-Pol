@@ -26,8 +26,10 @@ const DEFAULT_PERSIST_ROOT = fs.existsSync('/var/data') ? '/var/data' : path.joi
 const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(DEFAULT_PERSIST_ROOT, 'uploads'));
 const DISABLE_DB = process.env.DISABLE_DB === '1' || process.env.DISABLE_DB === 'true';
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(DEFAULT_PERSIST_ROOT, 'data'));
+const USE_PG = !!process.env.DATABASE_URL;
 const getSQLiteStore = () => {
   if (DISABLE_DB) return null;
+  if (USE_PG) return null;
   // Lazy require to avoid loading sqlite3 in environments without native module
   const SQLiteStore = require('connect-sqlite3')(session);
   return new SQLiteStore({ db: 'sessions.sqlite', dir: DATA_DIR });
