@@ -193,7 +193,14 @@ async function getPostgresDatabase() {
       return normalizeRow(rows[0]) || null;
     },
     async run(sql, params) {
-      await pool.query(toPgQuery(sql), Array.isArray(params) ? params : [params]);
+      const q = toPgQuery(sql);
+      if (params === undefined) {
+        await pool.query(q);
+      } else if (Array.isArray(params)) {
+        await pool.query(q, params);
+      } else {
+        await pool.query(q, [params]);
+      }
       return { changes: 1 };
     },
     async prepare(sql) {
