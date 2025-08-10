@@ -76,7 +76,7 @@ app.use(
     secret: process.env.SESSION_SECRET || 'dev_secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax' },
+    cookie: { httpOnly: true, sameSite: 'lax', secure: 'auto' },
     store: getSQLiteStore() || undefined,
   })
 );
@@ -136,6 +136,16 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Socket disconnected:', socket.data.code);
   });
+});
+
+// CSRF error handler
+app.use((err, req, res, next) => {
+  if (err && (err.code === 'EBADCSRFTOKEN' || err.message?.includes('invalid csrf token'))) {
+    // Token invalid or missing: redirect to the same page or login
+    if (req.method === 'GET') return res.redirect('/login');
+    return res.status(403).redirect('back');
+  }
+  return next(err);
 });
 
 // 404 handler
