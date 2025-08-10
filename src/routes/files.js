@@ -7,7 +7,7 @@ const { getDatabase } = require('../config/database');
 
 const router = express.Router();
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'uploads');
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'uploads'));
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => cb(null, uuidv4() + path.extname(file.originalname))
@@ -41,7 +41,7 @@ router.get('/download/:id', async (req, res) => {
   const db = await getDatabase();
   const file = await db.get('SELECT * FROM files WHERE id = ?', req.params.id);
   if (!file) return res.status(404).send('Introuvable');
-  const full = path.join(UPLOAD_DIR, file.filename);
+  const full = path.resolve(UPLOAD_DIR, file.filename);
   res.download(full, file.originalName);
 });
 
@@ -50,7 +50,7 @@ router.get('/raw/:id', async (req, res) => {
   const db = await getDatabase();
   const file = await db.get('SELECT * FROM files WHERE id = ?', req.params.id);
   if (!file) return res.status(404).send('Introuvable');
-  const full = path.join(UPLOAD_DIR, file.filename);
+  const full = path.resolve(UPLOAD_DIR, file.filename);
   // Autoriser uniquement certains formats en preview
   const lower = (file.originalName || '').toLowerCase();
   const isImage = ['.png', '.jpg', '.jpeg', '.gif', '.webp'].some(ext => lower.endsWith(ext));
@@ -66,7 +66,7 @@ router.post('/delete/:id', async (req, res) => {
   if (!file) return res.redirect('/files');
   await db.run('DELETE FROM files WHERE id = ?', req.params.id);
   try {
-    const full = path.join(UPLOAD_DIR, file.filename);
+    const full = path.resolve(UPLOAD_DIR, file.filename);
     require('fs').unlinkSync(full);
   } catch (_) {}
   res.redirect('/files');
