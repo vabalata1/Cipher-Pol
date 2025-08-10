@@ -145,7 +145,7 @@ const start = async () => {
     await getDatabase();
   }
   server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT} (DISABLE_DB=${DISABLE_DB})`);
+    console.log(`Server running on http://localhost:${PORT} (DISABLE_DB=${DISABLE_DB}, USE_PG=${USE_PG})`);
   });
 };
 
