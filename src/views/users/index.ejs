@@ -1,0 +1,35 @@
+<section>
+  <h1>Gestion des utilisateurs</h1>
+  <p class="hint">Définissez un mot de passe et une clé (prénom) pour chaque code MR.x.</p>
+
+  <div class="file-grid">
+    <% users.forEach(function(u){ %>
+      <div class="file-card">
+        <div class="file-meta">
+          <div class="name"><strong><%= u.code %></strong> <span class="sub"><%= u.isAdmin ? '• Admin' : '' %></span></div>
+          <form method="post" action="/users/<%= u.id %>/password">
+            <% if (csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <% } %>
+            <label>Nouveau mot de passe pour <%= u.code %></label>
+            <input type="password" name="password" placeholder="******" required minlength="6" />
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">Définir</button>
+            </div>
+          </form>
+
+          <form method="post" action="/users/<%= u.id %>/firstname">
+            <% if (csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <% } %>
+            <label>Clé (prénom) pour <%= u.code %></label>
+            <input type="text" name="firstName" placeholder="" value="<%= u.firstName || '' %>" />
+            <div class="actions">
+              <button type="submit" class="btn btn-secondary">Enregistrer la clé</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>

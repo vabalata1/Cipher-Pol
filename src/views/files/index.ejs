@@ -1,0 +1,50 @@
+<section>
+  <h1>Archives secrètes</h1>
+  <form method="post" action="/files/upload" enctype="multipart/form-data">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <label>Tag</label>
+    <input name="codeTag" placeholder="Sang / Opération / Rapports" required />
+    <label>Description</label>
+    <input name="description" />
+    <label>Croquis</label>
+    <div class="upload-controls">
+      <input id="upload-croquis" type="file" name="file" required style="display:none" />
+      <label for="upload-croquis" class="btn btn-secondary">Choisir un croquis</label>
+      <span id="upload-croquis-name" class="hint" style="margin-left:8px;">Aucun croquis choisi</span>
+    </div>
+    <button class="btn btn-primary" type="submit">Envoyer</button>
+  </form>
+  <div class="file-grid">
+    <% files.forEach(f => { 
+         const lower = (f.originalName || '').toLowerCase();
+         const isImage = ['.png','.jpg','.jpeg','.gif','.webp'].some(ext => lower.endsWith(ext));
+    %>
+      <div class="file-card">
+        <div class="file-thumb">
+          <% if (isImage) { %>
+            <a href="/files/download/<%= f.id %>"><img src="/files/raw/<%= f.id %>" alt="<%= f.originalName %>" /></a>
+          <% } else { %>
+            <div class="file-icon">📄</div>
+          <% } %>
+        </div>
+        <div class="file-meta">
+          <div class="name"><strong>[<%= f.codeTag %>]</strong> <%= f.description && f.description.length ? f.description : 'Sans description' %></div>
+          <div class="sub">par <%= f.uploaderCode %></div>
+          <div class="actions">
+            <a class="btn btn-secondary" href="/files/download/<%= f.id %>">Télécharger</a>
+            <% if (currentUser?.isAdmin) { %>
+              <form method="post" action="/files/delete/<%= f.id %>" onsubmit="return confirm('Supprimer ce croquis ?');">
+                <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
+                <button class="btn btn-outline" type="submit">Supprimer</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+

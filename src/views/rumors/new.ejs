@@ -1,0 +1,21 @@
+<section>
+  <h1>Nouvelle info / rumeur</h1>
+  <form method="post" action="/rumors">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <label>Tag</label>
+    <input name="codeTag" placeholder="Sang / Opération / Rapports / …" required />
+    <label>Crédibilité</label>
+    <select name="credibility" required>
+      <option>Verifie</option>
+      <option>Potentiellement faux</option>
+      <option>Rumeur</option>
+    </select>
+    <label>Contenu</label>
+    <textarea name="content" rows="6" required></textarea>
+    <button type="submit">Publier</button>
+  </form>
+</section>
+
+

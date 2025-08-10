@@ -1,0 +1,18 @@
+<section id="chat-root" data-code="<%= currentUser.code %>">
+  <h1>Fil clandestin</h1>
+  <form id="chat-form">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <input id="chat-input" placeholder="Dire quelque chose…" />
+    <button>Envoyer</button>
+  </form>
+  <ul id="messages">
+    <% messages.slice().reverse().forEach(m => { %>
+      <li><strong><%= m.code %></strong>: <%= m.content %></li>
+    <% }) %>
+  </ul>
+</section>
+<script src="/public/js/chat.js"></script>
+
+

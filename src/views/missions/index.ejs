@@ -1,0 +1,15 @@
+<section>
+  <h1>Mandats codés</h1>
+  <% if (currentUser?.isAdmin) { %>
+    <p class="actions"><a class="btn btn-primary" href="/missions/new">Publier une mission</a></p>
+  <% } %>
+  <ul>
+    <% missions.forEach(m => { %>
+      <li>
+        <a href="/missions/<%= m.id %>"><%= m.title %></a> <small>(<%= m.status %>)</small>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+

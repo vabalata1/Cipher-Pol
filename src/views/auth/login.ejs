@@ -1,0 +1,16 @@
+<section class="login">
+  <h1>Entrée cryptée</h1>
+  <p class="hint">Seuls les codes MR.x ouvrent la voie.</p>
+  <form method="post" action="/login">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <label>Code (MR.x)</label>
+    <input name="code" placeholder="MR.1" required />
+    <label>Mot de passe</label>
+    <input name="password" type="password" required />
+    <button type="submit">Ouvrir</button>
+  </form>
+</section>
+
+

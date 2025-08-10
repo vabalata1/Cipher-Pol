@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title ? title + ' · ' : '' %>Organisation</title>
+    <link rel="stylesheet" href="/public/css/main.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/js/lightbox.js"></script>
+  </head>
+  <body class="theme-dark" data-user-code="<%= currentUser ? currentUser.code : '' %>">
+    <header class="topbar">
+      <div class="brand">❖ Cipher Pol</div>
+      <% if (currentUser) { %>
+      <nav>
+        <a href="/">Accueil</a>
+        <a href="/chat">Fil</a>
+        <a href="/missions">Missions</a>
+        <a href="/rumors">Infos & Rumeurs</a>
+        <a href="/files">Documents</a>
+                <a href="/communications">Communications</a>
+        <a href="/cipher">Chiffrement</a>
+      </nav>
+      <form class="logout" method="post" action="/logout">
+        <% if (csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <% } %>
+        <button type="submit">Déconnexion (<%= currentUser.code %>)</button>
+      </form>
+      <% } %>
+    </header>
+    <main>
+      <%- body %>
+    </main>
+    <script src="/public/js/app.js"></script>
+  </body>
+  </html>
+
+

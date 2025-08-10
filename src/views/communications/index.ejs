@@ -1,0 +1,34 @@
+<section>
+  <h1>Communications</h1>
+  
+  <% if (!allowedUsers || !allowedUsers.length) { %>
+    <p class="hint">Aucun contact disponible.</p>
+  <% } else { %>
+    <% if (currentUser && (currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
+      <form method="post" action="/communications/clear" onsubmit="return confirm('Effacer toutes les discussions ?');" style="margin-bottom:12px;">
+        <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><% } %>
+        <button class="btn btn-outline" type="submit">Effacer toutes les discussions</button>
+      </form>
+    <% } %>
+    <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+      <% allowedUsers.forEach(function(u){ %>
+        <div class="file-card">
+          <div class="file-meta">
+            <div class="name"><strong><%= u.code %></strong></div>
+            <div class="messages" id="dm-<%= u.code %>" data-peer="<%= u.code %>" style="max-height:220px; overflow:auto; background:#0f1216; border:1px solid #1b2027; border-radius:6px; padding:8px;"></div>
+            <form class="dm-form" data-peer="<%= u.code %>" style="margin-top:8px;">
+              <% if (csrfToken) { %>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <% } %>
+              <input type="text" name="content" placeholder="Écrire à <%= u.code %>..." />
+              <div class="actions">
+                <button class="btn btn-primary" type="submit">Envoyer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+<script src="/public/js/communications.js"></script>

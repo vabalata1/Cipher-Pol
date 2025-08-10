@@ -1,0 +1,15 @@
+<section>
+  <h1>Nouvelle mission</h1>
+  <form method="post" action="/missions">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <label>Titre</label>
+    <input name="title" required />
+    <label>Contenu codé</label>
+    <textarea name="content" rows="6" required></textarea>
+    <button type="submit">Publier</button>
+  </form>
+</section>
+
+

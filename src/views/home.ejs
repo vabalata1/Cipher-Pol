@@ -1,0 +1,60 @@
+<section class="grid">
+  <div>
+    <h2>Missions</h2>
+    <ul>
+      <% missions.forEach(m => { %>
+        <li>
+          <a href="/missions/<%= m.id %>"><%= m.title %></a>
+          <small>(<%= m.status %>)</small>
+        </li>
+      <% }) %>
+      <li>
+        <div class="actions">
+          <a class="btn btn-outline" href="/missions">Voir tout</a>
+          <% if (currentUser?.isAdmin) { %>
+            <a class="btn btn-primary" href="/missions/new">Publier</a>
+          <% } %>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <h2>Infos & Rumeurs</h2>
+    <ul>
+      <% rumors.forEach(r => { %>
+        <li><strong>[<%= r.codeTag %>]</strong> <%= r.excerpt %>… <small>(<%= r.credibility %>)</small></li>
+      <% }) %>
+      <li>
+        <div class="actions">
+          <a class="btn btn-outline" href="/rumors">Voir tout</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <h2>Documents</h2>
+    <div class="file-grid">
+      <% files.forEach(f => { 
+           const lower = (f.originalName || '').toLowerCase();
+           const isImage = ['.png','.jpg','.jpeg','.gif','.webp'].some(ext => lower.endsWith(ext));
+      %>
+        <div class="file-card">
+          <div class="file-thumb">
+            <% if (isImage) { %>
+              <a href="/files/download/<%= f.id %>"><img src="/files/raw/<%= f.id %>" alt="<%= f.originalName %>" /></a>
+            <% } else { %>
+              <div class="file-icon">📄</div>
+            <% } %>
+          </div>
+          <div class="file-meta">
+            <div class="name"><strong>[<%= f.codeTag %>]</strong> <%= f.description && f.description.length ? f.description : 'Sans description' %></div>
+            <div class="sub">par <%= f.uploaderCode %></div>
+            <div class="actions"><a class="btn btn-secondary" href="/files">Ouvrir les archives</a></div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+

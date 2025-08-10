@@ -1,0 +1,28 @@
+<section>
+  <h1>
+    <%= mission.title %> <small>(<%= mission.status %>)</small>
+    <% if (currentUser?.isAdmin) { %>
+      <form style="display:inline-block;margin-left:10px;" method="post" action="/missions/<%= mission.id %>/delete" onsubmit="return confirm('Supprimer cette mission ?');">
+        <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
+        <button class="btn btn-outline" type="submit">Supprimer</button>
+      </form>
+    <% } %>
+  </h1>
+  <pre class="mission"><%= mission.content %></pre>
+
+  <h2>Réponses</h2>
+  <ul>
+    <% responses.forEach(r => { %>
+      <li><strong><%= r.code %></strong>: <%= r.content %></li>
+    <% }) %>
+  </ul>
+  <form method="post" action="/missions/<%= mission.id %>/respond">
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <textarea name="content" rows="4" placeholder="Réponse (codée)…" required></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+</section>
+
+

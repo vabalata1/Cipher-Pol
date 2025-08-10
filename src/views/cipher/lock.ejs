@@ -1,0 +1,15 @@
+<section class="login">
+  <h1>Accès au Chiffrement</h1>
+  <p class="hint">Entrez votre prenom</p>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <p class="hint" style="color:#ff9b9b"><%= (error === 'Clé non configurée. Contactez un admin.' ? 'Rien' : error) %></p>
+  <% } %>
+  <form method="post" action="/cipher/unlock" novalidate>
+    <% if (csrfToken) { %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <% } %>
+    <label>Prénom</label>
+    <input name="key" placeholder="Votre prénom" />
+    <button type="submit">Déverrouiller</button>
+  </form>
+</section>
