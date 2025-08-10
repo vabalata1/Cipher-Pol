@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const dayjs = require('dayjs');
 const { v4: uuidv4 } = require('uuid');
 const { getDatabase } = require('../config/database');
@@ -42,6 +43,9 @@ router.get('/download/:id', async (req, res) => {
   const file = await db.get('SELECT * FROM files WHERE id = ?', req.params.id);
   if (!file) return res.status(404).send('Introuvable');
   const full = path.resolve(UPLOAD_DIR, file.filename);
+  if (!fs.existsSync(full)) {
+    return res.status(404).send('Fichier introuvable sur le stockage');
+  }
   res.download(full, file.originalName);
 });
 
@@ -55,6 +59,10 @@ router.get('/raw/:id', async (req, res) => {
   const lower = (file.originalName || '').toLowerCase();
   const isImage = ['.png', '.jpg', '.jpeg', '.gif', '.webp'].some(ext => lower.endsWith(ext));
   if (!isImage) return res.status(415).send('Aperçu non supporté');
+  if (!fs.existsSync(full)) {
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect fill="#0b0d10" width="800" height="500"/><g fill="#9fb0c8" font-family="system-ui, Segoe UI, Roboto, sans-serif" text-anchor="middle"><text x="400" y="240" font-size="22">Aperçu indisponible</text><text x="400" y="270" font-size="14">Fichier manquant sur le stockage</text></g></svg>`;
+    return res.type('image/svg+xml').send(svg);
+  }
   res.sendFile(full);
 });
 
