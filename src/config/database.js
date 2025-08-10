@@ -104,6 +104,17 @@ async function getDatabase() {
     } catch (_) {
       // ignore
     }
+
+    // Migration: add blob column to files for inline storage fallback
+    try {
+      const finfo = await (await dbPromise).all("PRAGMA table_info(files)");
+      const hasBlob = finfo.some((c) => c.name === 'blob');
+      if (!hasBlob) {
+        await (await dbPromise).exec('ALTER TABLE files ADD COLUMN blob BLOB');
+      }
+    } catch (_) {
+      // ignore
+    }
   }
   return dbPromise;
 }
