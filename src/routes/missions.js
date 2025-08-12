@@ -3,6 +3,18 @@ const dayjs = require('dayjs');
 const router = express.Router();
 const { getDatabase } = require('../config/database');
 
+// Label mappers for display
+const mapDifficultyLabel = (v) => {
+  const k = (v || '').toString().toLowerCase();
+  const map = { faible: 'Faible', moyenne: 'Moyenne', elevee: 'Élevée', critique: 'Critique' };
+  return map[k] || v;
+};
+const mapPriorityLabel = (v) => {
+  const k = (v || '').toString().toLowerCase();
+  const map = { basse: 'Basse', normale: 'Normale', haute: 'Haute', primordial: 'Primordial' };
+  return map[k] || v;
+};
+
 
 // List missions
 router.get('/', async (req, res) => {
@@ -32,8 +44,8 @@ router.get('/', async (req, res) => {
     ${where}
     ORDER BY ${order}
   `, ...params);
-  // Normalize casing for display in views
-  missions.forEach(m => { if (m.priority) m.priority = (m.priority==='primordial'?'Primordial':m.priority.charAt(0).toUpperCase()+m.priority.slice(1)); if (m.difficulty) m.difficulty = m.difficulty.charAt(0).toUpperCase()+m.difficulty.slice(1); });
+  // Normalize labels for display in views
+  missions.forEach(m => { if (m.priority) m.priority = mapPriorityLabel(m.priority); if (m.difficulty) m.difficulty = mapDifficultyLabel(m.difficulty); });
   res.render('missions/index', { title: 'Mandats codés', missions, filters: { status, difficulty, priority, zone, sort } });
 });
 
