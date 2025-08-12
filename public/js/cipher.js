@@ -1,21 +1,25 @@
 // Système de chiffrement glagolitique
-const cipherMap = {
+let cipherMap = {
   'A': 'Ⱏ', 'B': 'Ⰸ', 'C': 'Ⱃ', 'D': 'Ⰻ', 'E': 'Ⱁ', 'F': 'Ⰽ', 'G': 'Ⱌ',
   'H': 'Ⰵ', 'I': 'Ⱒ', 'J': 'Ⱅ', 'K': 'Ⰱ', 'L': 'Ⰾ', 'M': 'Ⱇ', 'N': 'Ⱋ',
   'O': 'Ⰴ', 'P': 'Ⱈ', 'Q': 'Ⰿ', 'R': 'Ⱀ', 'S': 'Ⱄ', 'T': 'Ⰳ', 'U': 'Ⱆ',
   'V': 'Ⰲ', 'W': 'Ⱂ', 'X': 'Ⰰ', 'Y': 'Ⰹ', 'Z': 'Ⱌ'
 };
 
-// Créer la carte inverse pour le décodage
-const decodeMap = {};
-for (const [key, value] of Object.entries(cipherMap)) {
-  decodeMap[value] = key;
+let decodeMap = {};
+function rebuildDecodeMap() {
+  decodeMap = {};
+  for (const [key, value] of Object.entries(cipherMap)) {
+    decodeMap[value] = key;
+  }
 }
+rebuildDecodeMap();
 
 // Afficher le tableau de correspondance
 function displayCipherTable() {
   const table = document.getElementById('cipherTable');
-  if (!table || table.children.length) return;
+  if (!table) return;
+  table.innerHTML = '';
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   for (const letter of alphabet) {
     const pair = document.createElement('div');
@@ -23,6 +27,21 @@ function displayCipherTable() {
     pair.innerHTML = `${letter} = <span class="glagolitic-char">${cipherMap[letter]}</span>`;
     table.appendChild(pair);
   }
+}
+
+// Mélanger aléatoirement la correspondance
+function shuffleMapping() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const symbols = letters.map(l => cipherMap[l]);
+  for (let i = symbols.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [symbols[i], symbols[j]] = [symbols[j], symbols[i]];
+  }
+  const newMap = {};
+  letters.forEach((l, idx) => { newMap[l] = symbols[idx]; });
+  cipherMap = newMap;
+  rebuildDecodeMap();
+  displayCipherTable();
 }
 
 // Fonction d'encodage
@@ -71,6 +90,7 @@ window.encode = encode;
 window.decode = decode;
 window.clearPlain = clearPlain;
 window.clearCipher = clearCipher;
+window.shuffleMapping = shuffleMapping;
 
 // Initialiser: tableau + écouteurs boutons et inputs
 function initCipher() {
@@ -87,6 +107,9 @@ function initCipher() {
   if (decodeBtn) decodeBtn.addEventListener('click', decode);
   const clearCipherBtn = document.getElementById('clearCipherBtn');
   if (clearCipherBtn) clearCipherBtn.addEventListener('click', clearCipher);
+
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  if (shuffleBtn) shuffleBtn.addEventListener('click', shuffleMapping);
 
   if (plain) {
     plain.addEventListener('input', function () {
