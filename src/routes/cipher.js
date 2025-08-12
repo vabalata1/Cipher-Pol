@@ -13,7 +13,17 @@ router.get('/', async (req, res) => {
   // consume one-time unlock
   delete req.session.cipherUnlockOnce;
   delete req.session.cipherUnlockedFor;
-  return res.render('cipher/index', { title: 'Chiffrement', currentUser: req.user });
+
+  // Load saved mapping if any
+  let saved = null;
+  try {
+    const db = await getDatabase();
+    const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
+    if (row && row.value) {
+      saved = row.value;
+    }
+  } catch {}
+  return res.render('cipher/index', { title: 'Chiffrement', currentUser: req.user, savedCipherMap: saved });
 });
 
 // POST /cipher/unlock - Verify key (firstName)
@@ -40,6 +50,26 @@ router.post('/unlock', async (req, res) => {
   } catch (e) {
     console.error(e);
     return res.status(500).render('cipher/lock', { title: 'Chiffrement', error: 'Erreur serveur' });
+  }
+});
+
+// POST /cipher/shuffle - Save new mapping (MR.0/MR.1 only)
+router.post('/shuffle', async (req, res) => {
+  try {
+    const user = req.user;
+    if (!(user && (user.code === 'MR.0' || user.code === 'MR.1'))) {
+      return res.status(403).send('Accès refusé');
+    }
+    const body = req.body || {};
+    const mapping = body.mapping && typeof body.mapping === 'string' ? body.mapping : '';
+    if (!mapping) return res.status(400).send('Mapping manquant');
+    const db = await getDatabase();
+    // Upsert
+    await db.run('DELETE FROM app_settings WHERE key = ?', 'cipher_map');
+    await db.run('INSERT INTO app_settings (key, value) VALUES (?, ?)', ['cipher_map', mapping]);
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    return res.status(500).send('Erreur serveur');
   }
 });
 

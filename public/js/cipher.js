@@ -94,6 +94,16 @@ window.shuffleMapping = shuffleMapping;
 
 // Initialiser: tableau + écouteurs boutons et inputs
 function initCipher() {
+  // Load saved mapping if provided by server
+  if (window.__SAVED_CIPHER_MAP__) {
+    try {
+      const parsed = JSON.parse(window.__SAVED_CIPHER_MAP__);
+      if (parsed && typeof parsed === 'object') {
+        cipherMap = parsed;
+        rebuildDecodeMap();
+      }
+    } catch {}
+  }
   displayCipherTable();
 
   const plain = document.getElementById('plainText');
@@ -109,7 +119,16 @@ function initCipher() {
   if (clearCipherBtn) clearCipherBtn.addEventListener('click', clearCipher);
 
   const shuffleBtn = document.getElementById('shuffleBtn');
-  if (shuffleBtn) shuffleBtn.addEventListener('click', shuffleMapping);
+  if (shuffleBtn) shuffleBtn.addEventListener('click', async function() {
+    shuffleMapping();
+    try {
+      await fetch('/cipher/shuffle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapping: JSON.stringify(cipherMap) })
+      });
+    } catch {}
+  });
 
   if (plain) {
     plain.addEventListener('input', function () {

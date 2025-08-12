@@ -72,6 +72,10 @@ async function getSqliteDatabase() {
       uploaderCode TEXT NOT NULL,
       createdAt TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `);
   // Optional migrations
   try {
@@ -232,6 +236,10 @@ async function getPostgresDatabase() {
       toCode TEXT NOT NULL,
       content TEXT NOT NULL,
       createdAt TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS mission_milestones (
       id SERIAL PRIMARY KEY,
