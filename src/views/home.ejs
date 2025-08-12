@@ -1,22 +1,29 @@
 <section class="grid">
   <div>
     <h2>Missions</h2>
-    <ul>
-      <% missions.forEach(m => { %>
-        <li>
-          <a href="/missions/<%= m.id %>"><%= m.title %></a>
-          <small>(<%= m.status %>)</small>
-        </li>
-      <% }) %>
-      <li>
-        <div class="actions">
-          <a class="btn btn-outline" href="/missions">Voir tout</a>
-          <% if (currentUser?.isAdmin) { %>
-            <a class="btn btn-primary" href="/missions/new">Publier</a>
+    <div class="mission-grid">
+      <% missions.forEach(m => { 
+           const status = (m.status || 'active').toString();
+           const statusLower = status.toLowerCase();
+           const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+      %>
+        <article class="mission-card">
+          <div class="header">
+            <a class="title" href="/missions/<%= m.id %>"><%= m.title %></a>
+            <span class="status-badge status-<%= statusLower %>"><%= statusLabel %></span>
+          </div>
+          <% if (m.excerpt) { %>
+            <p class="excerpt"><%= m.excerpt %>…</p>
           <% } %>
-        </div>
-      </li>
-    </ul>
+        </article>
+      <% }) %>
+    </div>
+    <div class="actions">
+      <a class="btn btn-outline" href="/missions">Voir tout</a>
+      <% if (currentUser?.isAdmin) { %>
+        <a class="btn btn-primary" href="/missions/new">Publier</a>
+      <% } %>
+    </div>
   </div>
   <div>
     <h2>Infos & Rumeurs</h2>

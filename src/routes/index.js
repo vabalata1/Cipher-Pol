@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     });
   }
   const db = await getDatabase();
-  const missions = await db.all('SELECT id, title, status, createdAt FROM missions ORDER BY id DESC LIMIT 5');
+  const missions = await db.all('SELECT id, title, status, createdAt, substr(content, 1, 140) as excerpt FROM missions ORDER BY id DESC LIMIT 5');
   const rumors = await db.all('SELECT id, codeTag, credibility, substr(content, 1, 80) as excerpt, createdAt FROM rumors ORDER BY id DESC LIMIT 5');
   const files = await db.all('SELECT id, originalName, codeTag, uploaderCode, createdAt, description FROM files ORDER BY id DESC LIMIT 6');
 

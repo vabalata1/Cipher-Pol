@@ -375,3 +375,58 @@ img, video, canvas, svg {
   }
 }
 
+/* Missions preview cards */
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.mission-card {
+  background: #0f1216;
+  border: 1px solid #1b2027;
+  border-radius: 8px;
+  padding: 12px;
+}
+.mission-card .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mission-card .title {
+  color: #d6d9de;
+  font-weight: 700;
+  text-decoration: none;
+}
+.mission-card .title:hover {
+  text-decoration: underline;
+}
+.mission-card .excerpt {
+  color: #b9c2cf;
+  margin: 8px 0 0;
+}
+.status-badge {
+  font-size: .75em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #2a313c;
+  color: #b9c2cf;
+  background: #12161d;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.status-badge.status-active {
+  color: #9fe29f;
+  border-color: #2f3d2f;
+  background: #141c14;
+}
+.status-badge.status-closed,
+.status-badge.status-done,
+.status-badge.status-archived {
+  color: #a9b3c2;
+  border-color: #2a313c;
+  background: #0f1216;
+  opacity: .9;
+}
+
