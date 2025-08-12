@@ -61,12 +61,13 @@ router.post('/shuffle', async (req, res) => {
       return res.status(403).send('Accès refusé');
     }
     const body = req.body || {};
-    const mapping = body.mapping && typeof body.mapping === 'string' ? body.mapping : '';
+    let mapping = body.mapping;
     if (!mapping) return res.status(400).send('Mapping manquant');
     const db = await getDatabase();
     // Upsert
     await db.run('DELETE FROM app_settings WHERE key = ?', 'cipher_map');
-    await db.run('INSERT INTO app_settings (key, value) VALUES (?, ?)', ['cipher_map', mapping]);
+    const val = (typeof mapping === 'string') ? mapping : JSON.stringify(mapping);
+    await db.run('INSERT INTO app_settings (key, value) VALUES (?, ?)', ['cipher_map', val]);
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(500).send('Erreur serveur');

@@ -127,7 +127,7 @@ function initCipher() {
       await fetch('/cipher/shuffle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mapping: JSON.stringify(cipherMap) })
+        body: JSON.stringify({ mapping: cipherMap })
       });
     } catch {}
   });
