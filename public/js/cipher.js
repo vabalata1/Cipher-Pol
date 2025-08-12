@@ -44,15 +44,36 @@ function shuffleMapping() {
   displayCipherTable();
 }
 
+// Helpers to fold characters to A-Z letters (remove accents, handle ligatures)
+function foldToLetters(ch) {
+  if (!ch) return [];
+  // Handle common ligatures first
+  const ligMap = { 'œ': 'OE', 'Œ': 'OE', 'æ': 'AE', 'Æ': 'AE' };
+  if (ligMap[ch]) return ligMap[ch].split('');
+  // Remove diacritics
+  const stripped = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const up = stripped.toUpperCase();
+  // Keep only A-Z letters
+  const letters = up.replace(/[^A-Z]/g, '');
+  return letters.split('');
+}
+
 // Fonction d'encodage
 function encode() {
   const plainEl = document.getElementById('plainText');
   const cipherEl = document.getElementById('cipherText');
   if (!plainEl || !cipherEl) return;
-  const input = (plainEl.value || '').toUpperCase();
+  const input = plainEl.value || '';
   let result = '';
-  for (const char of input) {
-    result += cipherMap[char] ? cipherMap[char] : char;
+  for (const ch of input) {
+    const letters = foldToLetters(ch);
+    if (letters.length > 0) {
+      for (const L of letters) {
+        result += cipherMap[L] ? cipherMap[L] : L;
+      }
+    } else {
+      result += ch;
+    }
   }
   cipherEl.value = result;
 }
