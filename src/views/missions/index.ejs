@@ -19,9 +19,7 @@
           <p class="excerpt"><%= m.excerpt %>…</p>
         <% } %>
         <div class="hint">
-          <span>#<%= i + 1 %></span>
-          · <span><%= m.createdAt %></span>
-          · <span><%= m.responsesCount %> réponse<%= m.responsesCount === 1 ? '' : 's' %></span>
+          <span>#<%= missions.length - i %></span>
         </div>
       </article>
     <% }) %>
