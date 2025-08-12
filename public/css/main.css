@@ -496,6 +496,7 @@ img, video, canvas, svg {
   min-width: 140px;
 }
 .filters .btn { flex: 0 0 auto; }
+.filters .push-right { margin-left: auto; }
 
 /* (removed brief/alerts/widgets styles) */
 
