@@ -22,6 +22,9 @@
         <a href="/files">Documents</a>
                 <a href="/communications">Communications</a>
         <a href="/cipher">Chiffrement</a>
+        <% if (currentUser && (currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
+        <a href="/cipher/key">Clé</a>
+        <% } %>
       </nav>
       <form class="logout" method="post" action="/logout">
         <% if (csrfToken) { %>

@@ -1,0 +1,8 @@
+<section>
+  <h1>Clé de chiffrement (MR)</h1>
+  <div class="cipher-table">
+    <% Object.keys(mapping).sort().forEach(function(letter){ %>
+      <div class="cipher-pair"><%= letter %> = <span class="glagolitic-char"><%= mapping[letter] %></span></div>
+    <% }) %>
+  </div>
+</section>

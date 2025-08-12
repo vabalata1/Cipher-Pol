@@ -89,4 +89,29 @@ router.get('/map', async (req, res) => {
   }
 });
 
+// GET /cipher/key - show current mapping to MR.0/MR.1 only
+router.get('/key', async (req, res) => {
+  try {
+    const user = req.user;
+    if (!(user && (user.code === 'MR.0' || user.code === 'MR.1'))) {
+      return res.status(403).send('Accès refusé');
+    }
+    const defaultMap = {
+      'A': 'Ⱏ', 'B': 'Ⰸ', 'C': 'Ⱃ', 'D': 'Ⰻ', 'E': 'Ⱁ', 'F': 'Ⰽ', 'G': 'Ⱌ',
+      'H': 'Ⰵ', 'I': 'Ⱒ', 'J': 'Ⱅ', 'K': 'Ⰱ', 'L': 'Ⰾ', 'M': 'Ⱇ', 'N': 'Ⱋ',
+      'O': 'Ⰴ', 'P': 'Ⱈ', 'Q': 'Ⰿ', 'R': 'Ⱀ', 'S': 'Ⱄ', 'T': 'Ⰳ', 'U': 'Ⱆ',
+      'V': 'Ⰲ', 'W': 'Ⱂ', 'X': 'Ⰰ', 'Y': 'Ⰹ', 'Z': 'Ⱌ'
+    };
+    const db = await getDatabase();
+    const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
+    let mapping = defaultMap;
+    if (row && row.value) {
+      try { const parsed = JSON.parse(row.value); if (parsed && typeof parsed === 'object') mapping = parsed; } catch {}
+    }
+    return res.render('cipher/key', { title: 'Clé de chiffrement', mapping });
+  } catch (e) {
+    return res.status(500).send('Erreur serveur');
+  }
+});
+
 module.exports = router;
