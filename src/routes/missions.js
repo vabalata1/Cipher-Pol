@@ -58,6 +58,26 @@ router.post('/:id/respond', async (req, res) => {
   res.redirect(`/missions/${req.params.id}`);
 });
 
+// Admins MR.0/MR.1 can update status
+router.post('/:id/status', async (req, res) => {
+  try {
+    const user = req.user;
+    if (!(user && (user.isAdmin || user.code === 'MR.0' || user.code === 'MR.1'))) {
+      return res.status(403).send('Accès refusé');
+    }
+    const allowed = ['active', 'en_cours', 'terminee'];
+    const status = (req.body.status || '').toString().toLowerCase();
+    if (!allowed.includes(status)) {
+      return res.redirect(`/missions/${req.params.id}`);
+    }
+    const db = await getDatabase();
+    await db.run('UPDATE missions SET status = ? WHERE id = ?', [status, req.params.id]);
+    return res.redirect(`/missions/${req.params.id}`);
+  } catch (e) {
+    return res.redirect(`/missions/${req.params.id}`);
+  }
+});
+
 // Delete mission (admin only)
 router.post('/:id/delete', async (req, res) => {
   if (!req.user?.isAdmin) return res.status(403).send('Accès refusé');

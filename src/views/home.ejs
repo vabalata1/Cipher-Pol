@@ -3,9 +3,10 @@
     <h2>Missions</h2>
     <div class="mission-grid">
       <% missions.forEach(m => { 
-           const status = (m.status || 'active').toString();
-           const statusLower = status.toLowerCase();
-           const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+           const statusKey = (m.status || 'active').toString().toLowerCase();
+           const statusLower = statusKey;
+           const statusMap = { active: 'Actif', 'en_cours': 'En cours', done: 'Terminé', terminee: 'Terminé', closed: 'Clôturé', archived: 'Archivé' };
+           const statusLabel = statusMap[statusKey] || (statusKey.charAt(0).toUpperCase() + statusKey.slice(1));
       %>
         <article class="mission-card">
           <div class="header">

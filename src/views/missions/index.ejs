@@ -4,10 +4,11 @@
     <p class="actions"><a class="btn btn-primary" href="/missions/new">Publier une mission</a></p>
   <% } %>
   <div class="mission-list">
-    <% missions.forEach(m => { 
-         const status = (m.status || 'active').toString();
-         const statusLower = status.toLowerCase();
-         const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+    <% missions.forEach(function(m, i) { 
+         const statusKey = (m.status || 'active').toString().toLowerCase();
+         const statusLower = statusKey;
+         const statusMap = { active: 'Actif', 'en_cours': 'En cours', done: 'Terminé', terminee: 'Terminé', closed: 'Clôturé', archived: 'Archivé' };
+         const statusLabel = statusMap[statusKey] || (statusKey.charAt(0).toUpperCase() + statusKey.slice(1));
     %>
       <article class="mission-card">
         <div class="header">
@@ -18,7 +19,7 @@
           <p class="excerpt"><%= m.excerpt %>…</p>
         <% } %>
         <div class="hint">
-          <span>#<%= m.id %></span>
+          <span>#<%= i + 1 %></span>
           · <span><%= m.createdAt %></span>
           · <span><%= m.responsesCount %> réponse<%= m.responsesCount === 1 ? '' : 's' %></span>
         </div>

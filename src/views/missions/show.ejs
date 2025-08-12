@@ -1,10 +1,24 @@
 <section>
   <h1>
-    <%= mission.title %> <small>(<%= mission.status %>)</small>
-    <% if (currentUser?.isAdmin) { %>
+    <% 
+      const statusKey = (mission.status || 'active').toString().toLowerCase();
+      const statusMap = { active: 'Actif', 'en_cours': 'En cours', done: 'Terminé', terminee: 'Terminé', closed: 'Clôturé', archived: 'Archivé' };
+      const statusLabel = statusMap[statusKey] || (statusKey.charAt(0).toUpperCase() + statusKey.slice(1));
+    %>
+    <%= mission.title %> <small>(<%= statusLabel %>)</small>
+    <% if (currentUser && (currentUser.isAdmin || currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
       <form style="display:inline-block;margin-left:10px;" method="post" action="/missions/<%= mission.id %>/delete" onsubmit="return confirm('Supprimer cette mission ?');">
         <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
         <button class="btn btn-outline" type="submit">Supprimer</button>
+      </form>
+      <form style="display:inline-block;margin-left:10px;" method="post" action="/missions/<%= mission.id %>/status">
+        <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
+        <select name="status">
+          <option value="active" <%= statusKey==='active' ? 'selected' : '' %>>Actif</option>
+          <option value="en_cours" <%= statusKey==='en_cours' ? 'selected' : '' %>>En cours</option>
+          <option value="terminee" <%= (statusKey==='terminee' || statusKey==='done') ? 'selected' : '' %>>Terminé</option>
+        </select>
+        <button class="btn btn-secondary" type="submit">Mettre à jour</button>
       </form>
     <% } %>
   </h1>

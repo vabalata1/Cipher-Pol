@@ -430,6 +430,19 @@ img, video, canvas, svg {
   opacity: .9;
 }
 
+/* Additional statuses */
+.status-badge.status-en_cours {
+  color: #ffd27a;
+  border-color: #5a4a2a;
+  background: #221c12;
+}
+.status-badge.status-terminee,
+.status-badge.status-done {
+  color: #a6b3c2;
+  border-color: #2a313c;
+  background: #151a1a;
+}
+
 /* Missions page list */
 .mission-list {
   display: grid;
