@@ -1,7 +1,9 @@
 <main>
   <div class="cipher-container">
     <div class="cipher-header">
+      <% if (currentUser && (currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
       <div class="actions"><button type="button" id="shuffleBtn" class="btn btn-outline">Mélanger</button></div>
+      <% } %>
     </div>
     
     <div class="cipher-table" id="cipherTable"></div>
