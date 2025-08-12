@@ -54,18 +54,7 @@
     </script>
   <% } %>
 
-  <% if (currentUser && (currentUser.code==='MR.0' || currentUser.code==='MR.1')) { %>
-    <form class="actions" method="post" action="/missions/<%= mission.id %>/vote">
-      <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
-      <select name="value">
-        <option value="basse">Basse</option>
-        <option value="normale">Normale</option>
-        <option value="haute">Haute</option>
-        <option value="primordiale">Primordiale</option>
-      </select>
-      <button class="btn btn-outline" type="submit">Voter priorité</button>
-    </form>
-  <% } %>
+
 
   <div class="meta-chips">
     <span class="chip chip-status"><%= statusLabel %></span>
@@ -77,8 +66,8 @@
 
   <% const isMRAdmin = currentUser && (currentUser.isAdmin || currentUser.code==='MR.0' || currentUser.code==='MR.1'); %>
 
-  <h3>Assignations</h3>
   <% if ((assignments && assignments.length) || isMRAdmin) { %>
+    <h3>Assignations</h3>
     <ul>
       <% (assignments||[]).forEach(a => { %>
         <li><%= a.code %></li>
@@ -93,8 +82,8 @@
     <% } %>
   <% } %>
 
-  <h3>Binômes</h3>
   <% if ((binomes && binomes.length) || isMRAdmin) { %>
+    <h3>Binômes</h3>
     <ul>
       <% (binomes||[]).forEach(b => { %>
         <li><%= b.codeA %> ↔ <%= b.codeB %></li>
@@ -110,8 +99,8 @@
     <% } %>
   <% } %>
 
-  <h3>Sous-missions</h3>
   <% if ((subs && subs.length) || isMRAdmin) { %>
+    <h3>Sous-missions</h3>
     <ul>
       <% (subs||[]).forEach(s => { %>
         <li><a href="/missions/<%= s.id %>"><%= s.title %></a></li>

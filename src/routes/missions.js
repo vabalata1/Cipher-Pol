@@ -63,11 +63,7 @@ router.get('/:id', async (req, res) => {
   const binomes = await db.all('SELECT codeA, codeB FROM mission_binomes WHERE missionId = ? ORDER BY id ASC', req.params.id);
   const deps = await db.all('SELECT d.dependsOnId as id, m.title FROM mission_dependencies d JOIN missions m ON m.id = d.dependsOnId WHERE d.missionId = ?', req.params.id);
   const subs = await db.all('SELECT d.missionId as id, m.title FROM mission_dependencies d JOIN missions m ON m.id = d.missionId WHERE d.dependsOnId = ?', req.params.id);
-  const votes = await db.all('SELECT code, value FROM mission_priority_votes WHERE missionId = ?', req.params.id);
-  const precedence = { primordiale: 1, haute: 2, normale: 3, basse: 4 };
-  let votedPriority = null;
-  for (const v of votes) { const val = String(v.value||'').toLowerCase(); if (!votedPriority || precedence[val] < precedence[votedPriority]) votedPriority = val; }
-  res.render('missions/show', { title: mission.title, mission, responses, milestones, assignments, binomes, deps, subs, votes, votedPriority });
+  res.render('missions/show', { title: mission.title, mission, responses, milestones, assignments, binomes, deps, subs });
 });
 
 // Add milestone
@@ -142,20 +138,7 @@ router.post('/:id/submissions', async (req, res) => {
   } catch { return res.redirect('back'); }
 });
 
-// Priority vote (MR.0 / MR.1)
-router.post('/:id/vote', async (req, res) => {
-  try {
-    const user = req.user; if (!(user && (user.code==='MR.0' || user.code==='MR.1'))) return res.status(403).send('Accès refusé');
-    const { value } = req.body || {}; const allowed = ['primordiale','haute','normale','basse'];
-    const v = String(value||'').toLowerCase(); if (!allowed.includes(v)) return res.redirect('back');
-    const db = await getDatabase();
-    // Upsert simplistic: delete previous vote from this code, insert new
-    await db.run('DELETE FROM mission_priority_votes WHERE missionId = ? AND code = ?', [req.params.id, user.code]);
-    const st = await db.prepare('INSERT INTO mission_priority_votes (missionId, code, value, createdAt) VALUES (?, ?, ?, ?)');
-    await st.run(req.params.id, user.code, v, dayjs().toISOString()); await st.finalize();
-    return res.redirect(`/missions/${req.params.id}`);
-  } catch { return res.redirect('back'); }
-});
+
 
 
 // Respond to mission
