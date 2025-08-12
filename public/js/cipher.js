@@ -97,9 +97,9 @@ function initCipher() {
   // Load saved mapping if provided by server
   if (window.__SAVED_CIPHER_MAP__) {
     try {
-      const parsed = JSON.parse(window.__SAVED_CIPHER_MAP__);
-      if (parsed && typeof parsed === 'object') {
-        cipherMap = parsed;
+      const obj = window.__SAVED_CIPHER_MAP__;
+      if (obj && typeof obj === 'object') {
+        cipherMap = obj;
         rebuildDecodeMap();
       }
     } catch {}

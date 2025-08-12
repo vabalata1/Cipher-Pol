@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
     const db = await getDatabase();
     const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
     if (row && row.value) {
-      saved = row.value;
+      try { saved = JSON.parse(row.value); } catch { saved = null; }
     }
   } catch {}
   return res.render('cipher/index', { title: 'Chiffrement', currentUser: req.user, savedCipherMap: saved });
