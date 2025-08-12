@@ -94,7 +94,8 @@ window.shuffleMapping = shuffleMapping;
 
 async function loadSavedMap() {
   try {
-    const resp = await fetch('/cipher/map', { headers: { 'Accept': 'application/json' } });
+    const url = '/cipher/map?_=' + Date.now();
+    const resp = await fetch(url, { headers: { 'Accept': 'application/json' } , cache: 'no-store' });
     if (!resp.ok) return;
     const data = await resp.json();
     if (data && typeof data === 'object') {

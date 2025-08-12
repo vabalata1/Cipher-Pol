@@ -79,6 +79,9 @@ router.get('/map', async (req, res) => {
   try {
     const db = await getDatabase();
     const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     if (!row || !row.value) return res.json(null);
     try { return res.json(JSON.parse(row.value)); } catch { return res.json(null); }
   } catch (e) {
