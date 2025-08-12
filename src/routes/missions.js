@@ -7,20 +7,20 @@ const PDFDocument = require('pdfkit');
 // List missions
 router.get('/', async (req, res) => {
   const db = await getDatabase();
-  const { status, difficulty, priority, zone, tag, sort } = req.query || {};
+  const { status, difficulty, priority, zone, sort } = req.query || {};
   const clauses = [];
   const params = [];
   if (status) { clauses.push('m.status = ?'); params.push(String(status)); }
   if (difficulty) { clauses.push('m.difficulty = ?'); params.push(String(difficulty)); }
   if (priority) { clauses.push('m.priority = ?'); params.push(String(priority)); }
   if (zone) { clauses.push('m.zone = ?'); params.push(String(zone)); }
-  if (tag) { clauses.push('(m.tags LIKE ? OR m.tags LIKE ? OR m.tags = ?)'); params.push('%,'+tag+',%','%,'+tag, tag+',%'); }
+
   const where = clauses.length ? 'WHERE ' + clauses.join(' AND ') : '';
   let order = 'm.id DESC';
-  if (sort === 'priority') order = "CASE m.priority WHEN 'alpha' THEN 1 WHEN 'haute' THEN 2 WHEN 'normale' THEN 3 ELSE 4 END, m.id DESC";
+  if (sort === 'priority') order = "CASE m.priority WHEN 'critique' THEN 1 WHEN 'haute' THEN 2 WHEN 'normale' THEN 3 ELSE 4 END, m.id DESC";
   if (sort === 'deadline') order = "m.deadlineAt IS NULL, m.deadlineAt ASC";
   const missions = await db.all(`
-    SELECT m.id, m.title, m.status, m.createdAt, m.difficulty, m.priority, m.zone, m.tags, m.deadlineAt,
+    SELECT m.id, m.title, m.status, m.createdAt, m.difficulty, m.priority, m.zone, m.deadlineAt,
            substr(m.content, 1, 160) AS excerpt,
            COALESCE(r.cnt, 0) AS responsesCount
     FROM missions m
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
     ${where}
     ORDER BY ${order}
   `, ...params);
-  res.render('missions/index', { title: 'Mandats codés', missions, filters: { status, difficulty, priority, zone, tag, sort } });
+  res.render('missions/index', { title: 'Mandats codés', missions, filters: { status, difficulty, priority, zone, sort } });
 });
 
 // Create mission (MR.0 only -> isAdmin)

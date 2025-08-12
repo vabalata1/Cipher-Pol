@@ -25,10 +25,9 @@
       <option value="basse" <%= (filters && filters.priority==='basse')?'selected':'' %>>Basse</option>
       <option value="normale" <%= (filters && filters.priority==='normale')?'selected':'' %>>Normale</option>
       <option value="haute" <%= (filters && filters.priority==='haute')?'selected':'' %>>Haute</option>
-      <option value="alpha" <%= (filters && filters.priority==='alpha')?'selected':'' %>>ALPHA</option>
+      <option value="critique" <%= (filters && filters.priority==='critique')?'selected':'' %>>Critique</option>
     </select>
     <input name="zone" placeholder="Zone" value="<%= (filters && filters.zone) || '' %>" />
-    <input name="tag" placeholder="Tag" value="<%= (filters && filters.tag) || '' %>" />
     <select name="sort">
       <option value="">Trier</option>
       <option value="priority" <%= (filters && filters.sort==='priority')?'selected':'' %>>Priorité</option>
@@ -48,17 +47,19 @@
       <article class="mission-card">
         <div class="header">
           <a class="title" href="/missions/<%= m.id %>"><%= m.title %></a>
-          <span class="status-badge status-<%= statusLower %>"><%= statusLabel %></span>
+          <small class="hint">
+            statut: <%= statusLabel %>
+            <% if (m.difficulty) { %> · diff.: <%= m.difficulty %><% } %>
+            <% if (m.priority) { %> · prio.: <%= m.priority %><% } %>
+            <% if (m.zone) { %> · zone: <%= m.zone %><% } %>
+            <% if (m.deadlineAt) { %> · échéance: <%= m.deadlineAt %><% } %>
+          </small>
         </div>
         <% if (m.excerpt) { %>
           <p class="excerpt"><%= m.excerpt %>…</p>
         <% } %>
         <div class="hint">
           <span>#<%= missions.length - i %></span>
-          <% if (m.priority) { %> · <span>Priorité: <%= m.priority %></span><% } %>
-          <% if (m.difficulty) { %> · <span>Diff.: <%= m.difficulty %></span><% } %>
-          <% if (m.zone) { %> · <span>Zone: <%= m.zone %></span><% } %>
-          <% if (m.deadlineAt) { %> · <span>Échéance: <%= m.deadlineAt %></span><% } %>
         </div>
       </article>
     <% }) %>
