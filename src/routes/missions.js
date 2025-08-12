@@ -6,8 +6,20 @@ const { getDatabase } = require('../config/database');
 // List missions
 router.get('/', async (req, res) => {
   const db = await getDatabase();
+  const { status, difficulty, priority, zone, tag, sort } = req.query || {};
+  const clauses = [];
+  const params = [];
+  if (status) { clauses.push('m.status = ?'); params.push(String(status)); }
+  if (difficulty) { clauses.push('m.difficulty = ?'); params.push(String(difficulty)); }
+  if (priority) { clauses.push('m.priority = ?'); params.push(String(priority)); }
+  if (zone) { clauses.push('m.zone = ?'); params.push(String(zone)); }
+  if (tag) { clauses.push('(m.tags LIKE ? OR m.tags LIKE ? OR m.tags = ?)'); params.push('%,'+tag+',%','%,'+tag, tag+',%'); }
+  const where = clauses.length ? 'WHERE ' + clauses.join(' AND ') : '';
+  let order = 'm.id DESC';
+  if (sort === 'priority') order = "CASE m.priority WHEN 'alpha' THEN 1 WHEN 'haute' THEN 2 WHEN 'normale' THEN 3 ELSE 4 END, m.id DESC";
+  if (sort === 'deadline') order = "m.deadlineAt IS NULL, m.deadlineAt ASC";
   const missions = await db.all(`
-    SELECT m.id, m.title, m.status, m.createdAt,
+    SELECT m.id, m.title, m.status, m.createdAt, m.difficulty, m.priority, m.zone, m.tags, m.deadlineAt,
            substr(m.content, 1, 160) AS excerpt,
            COALESCE(r.cnt, 0) AS responsesCount
     FROM missions m
@@ -16,8 +28,9 @@ router.get('/', async (req, res) => {
       FROM mission_responses
       GROUP BY missionId
     ) r ON r.missionId = m.id
-    ORDER BY m.id DESC
-  `);
+    ${where}
+    ORDER BY ${order}
+  `, ...params);
   res.render('missions/index', { title: 'Mandats codés', missions });
 });
 
@@ -29,11 +42,11 @@ router.get('/new', (req, res) => {
 
 router.post('/', async (req, res) => {
   if (!req.user?.isAdmin) return res.status(403).send('Accès refusé');
-  const { title, content } = req.body;
+  const { title, content, status, difficulty, priority, zone, tags, deadlineAt } = req.body;
   if (!title || !content) return res.redirect('/missions');
   const db = await getDatabase();
-  const stmt = await db.prepare('INSERT INTO missions (title, content, createdBy, createdAt) VALUES (?, ?, ?, ?)');
-  await stmt.run(title.trim(), content.trim(), req.user.id, dayjs().toISOString());
+  const stmt = await db.prepare('INSERT INTO missions (title, content, status, difficulty, priority, zone, tags, deadlineAt, createdBy, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+  await stmt.run(title.trim(), content.trim(), (status||'active').toLowerCase(), difficulty||null, priority||null, zone||null, tags ? (','+tags.replace(/\s+/g, '')+',') : null, deadlineAt||null, req.user.id, dayjs().toISOString());
   await stmt.finalize();
   res.redirect('/missions');
 });
@@ -65,7 +78,7 @@ router.post('/:id/status', async (req, res) => {
     if (!(user && (user.isAdmin || user.code === 'MR.0' || user.code === 'MR.1'))) {
       return res.status(403).send('Accès refusé');
     }
-    const allowed = ['active', 'en_cours', 'terminee'];
+    const allowed = ['active', 'en_cours', 'verrouille', 'terminee', 'archivee'];
     const status = (req.body.status || '').toString().toLowerCase();
     if (!allowed.includes(status)) {
       return res.redirect(`/missions/${req.params.id}`);

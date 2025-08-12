@@ -6,8 +6,53 @@
     <% } %>
     <label>Titre</label>
     <input name="title" required />
+
     <label>Contenu codé</label>
     <textarea name="content" rows="6" required></textarea>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+      <div>
+        <label>Statut</label>
+        <select name="status">
+          <option value="active">Actif</option>
+          <option value="en_cours">En cours</option>
+          <option value="verrouille">Verrouillé</option>
+          <option value="terminee">Terminé</option>
+          <option value="archivee">Archivé</option>
+        </select>
+      </div>
+      <div>
+        <label>Difficulté</label>
+        <select name="difficulty">
+          <option value="faible">Faible</option>
+          <option value="moyenne">Moyenne</option>
+          <option value="elevee">Élevée</option>
+          <option value="critique">Critique</option>
+        </select>
+      </div>
+      <div>
+        <label>Priorité</label>
+        <select name="priority">
+          <option value="basse">Basse</option>
+          <option value="normale">Normale</option>
+          <option value="haute">Haute</option>
+          <option value="alpha">ALPHA</option>
+        </select>
+      </div>
+      <div>
+        <label>Zone</label>
+        <input name="zone" placeholder="Ex: Nord-Est" />
+      </div>
+      <div>
+        <label>Tags</label>
+        <input name="tags" placeholder="tag1, tag2" />
+      </div>
+      <div>
+        <label>Échéance (ISO)</label>
+        <input name="deadlineAt" placeholder="2025-08-12T23:59:00Z" />
+      </div>
+    </div>
+
     <button type="submit">Publier</button>
   </form>
 </section>

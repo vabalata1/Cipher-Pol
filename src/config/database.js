@@ -38,6 +38,14 @@ async function getSqliteDatabase() {
       status TEXT NOT NULL DEFAULT 'active',
       createdBy INTEGER,
       createdAt TEXT NOT NULL,
+      -- New optional fields (added via migrations below):
+      difficulty TEXT,
+      priority TEXT,
+      zone TEXT,
+      tags TEXT,
+      deadlineAt TEXT,
+      geo TEXT,
+      points INTEGER DEFAULT 0,
       FOREIGN KEY(createdBy) REFERENCES users(id) ON DELETE SET NULL
     );
     CREATE TABLE IF NOT EXISTS mission_responses (
@@ -95,6 +103,58 @@ async function getSqliteDatabase() {
       await db.exec('ALTER TABLE files ADD COLUMN blob BLOB');
     }
   } catch {}
+  // New migrations for missions extended schema
+  try {
+    const minfo = await db.all("PRAGMA table_info(missions)");
+    const ensure = async (name, def) => { if (!minfo.some(c => c.name === name)) { await db.exec(`ALTER TABLE missions ADD COLUMN ${name} ${def}`); } };
+    await ensure('difficulty', 'TEXT');
+    await ensure('priority', 'TEXT');
+    await ensure('zone', 'TEXT');
+    await ensure('tags', 'TEXT');
+    await ensure('deadlineAt', 'TEXT');
+    await ensure('geo', 'TEXT');
+    await ensure('points', 'INTEGER DEFAULT 0');
+  } catch {}
+  try {
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS mission_milestones (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        dueAt TEXT,
+        doneAt TEXT,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS mission_assignments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        code TEXT NOT NULL,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS mission_priority_votes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        code TEXT NOT NULL,
+        value TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS mission_attachments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        fileId INTEGER NOT NULL,
+        kind TEXT,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE
+      );
+      CREATE TABLE IF NOT EXISTS mission_dependencies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        dependsOnId INTEGER NOT NULL,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE,
+        FOREIGN KEY(dependsOnId) REFERENCES missions(id) ON DELETE CASCADE
+      );
+    `);
+  } catch {}
   return db;
 }
 
@@ -125,7 +185,14 @@ async function getPostgresDatabase() {
       content TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'active',
       createdBy INTEGER,
-      createdAt TEXT NOT NULL
+      createdAt TEXT NOT NULL,
+      difficulty TEXT,
+      priority TEXT,
+      zone TEXT,
+      tags TEXT,
+      deadlineAt TEXT,
+      geo TEXT,
+      points INTEGER DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS mission_responses (
       id SERIAL PRIMARY KEY,
@@ -159,7 +226,47 @@ async function getPostgresDatabase() {
       content TEXT NOT NULL,
       createdAt TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS mission_milestones (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      dueAt TEXT,
+      doneAt TEXT
+    );
+    CREATE TABLE IF NOT EXISTS mission_assignments (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      code TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS mission_priority_votes (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      code TEXT NOT NULL,
+      value TEXT NOT NULL,
+      createdAt TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS mission_attachments (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      fileId INTEGER NOT NULL,
+      kind TEXT
+    );
+    CREATE TABLE IF NOT EXISTS mission_dependencies (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      dependsOnId INTEGER NOT NULL
+    );
   `);
+  // Add columns if missing (Postgres)
+  try {
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS difficulty TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS priority TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS zone TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS tags TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS deadlineAt TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS geo TEXT");
+    await pool.query("ALTER TABLE missions ADD COLUMN IF NOT EXISTS points INTEGER DEFAULT 0");
+  } catch {}
 
   const normalizeRow = (row) => {
     if (!row) return row;

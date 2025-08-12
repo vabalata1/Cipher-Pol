@@ -3,11 +3,46 @@
   <% if (currentUser?.isAdmin) { %>
     <p class="actions"><a class="btn btn-primary" href="/missions/new">Publier une mission</a></p>
   <% } %>
+
+  <form class="actions" method="get" action="/missions" style="flex-wrap:wrap; gap:8px;">
+    <select name="status">
+      <option value="">Statut</option>
+      <option value="active" <%= (req?.query?.status==='active')?'selected':'' %>>Actif</option>
+      <option value="en_cours" <%= (req?.query?.status==='en_cours')?'selected':'' %>>En cours</option>
+      <option value="verrouille" <%= (req?.query?.status==='verrouille')?'selected':'' %>>Verrouillé</option>
+      <option value="terminee" <%= (req?.query?.status==='terminee')?'selected':'' %>>Terminé</option>
+      <option value="archivee" <%= (req?.query?.status==='archivee')?'selected':'' %>>Archivé</option>
+    </select>
+    <select name="difficulty">
+      <option value="">Difficulté</option>
+      <option value="faible">Faible</option>
+      <option value="moyenne">Moyenne</option>
+      <option value="elevee">Élevée</option>
+      <option value="critique">Critique</option>
+    </select>
+    <select name="priority">
+      <option value="">Priorité</option>
+      <option value="basse">Basse</option>
+      <option value="normale">Normale</option>
+      <option value="haute">Haute</option>
+      <option value="alpha">ALPHA</option>
+    </select>
+    <input name="zone" placeholder="Zone" value="<%= req?.query?.zone||'' %>" />
+    <input name="tag" placeholder="Tag" value="<%= req?.query?.tag||'' %>" />
+    <select name="sort">
+      <option value="">Trier</option>
+      <option value="priority" <%= (req?.query?.sort==='priority')?'selected':'' %>>Priorité</option>
+      <option value="deadline" <%= (req?.query?.sort==='deadline')?'selected':'' %>>Échéance</option>
+    </select>
+    <button class="btn btn-outline" type="submit">Filtrer</button>
+    <a class="btn btn-secondary" href="/missions">Réinitialiser</a>
+  </form>
+
   <div class="mission-list">
     <% missions.forEach(function(m, i) { 
          const statusKey = (m.status || 'active').toString().toLowerCase();
          const statusLower = statusKey;
-         const statusMap = { active: 'Actif', 'en_cours': 'En cours', done: 'Terminé', terminee: 'Terminé', closed: 'Clôturé', archived: 'Archivé' };
+         const statusMap = { active: 'Actif', 'en_cours': 'En cours', verrouille: 'Verrouillé', terminee: 'Terminé', archivee: 'Archivé' };
          const statusLabel = statusMap[statusKey] || (statusKey.charAt(0).toUpperCase() + statusKey.slice(1));
     %>
       <article class="mission-card">
@@ -20,6 +55,10 @@
         <% } %>
         <div class="hint">
           <span>#<%= missions.length - i %></span>
+          <% if (m.priority) { %> · <span>Priorité: <%= m.priority %></span><% } %>
+          <% if (m.difficulty) { %> · <span>Diff.: <%= m.difficulty %></span><% } %>
+          <% if (m.zone) { %> · <span>Zone: <%= m.zone %></span><% } %>
+          <% if (m.deadlineAt) { %> · <span>Échéance: <%= m.deadlineAt %></span><% } %>
         </div>
       </article>
     <% }) %>

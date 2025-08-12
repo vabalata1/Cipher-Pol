@@ -2,7 +2,7 @@
   <h1>
     <% 
       const statusKey = (mission.status || 'active').toString().toLowerCase();
-      const statusMap = { active: 'Actif', 'en_cours': 'En cours', done: 'Terminé', terminee: 'Terminé', closed: 'Clôturé', archived: 'Archivé' };
+      const statusMap = { active: 'Actif', 'en_cours': 'En cours', verrouille: 'Verrouillé', terminee: 'Terminé', archivee: 'Archivé' };
       const statusLabel = statusMap[statusKey] || (statusKey.charAt(0).toUpperCase() + statusKey.slice(1));
     %>
     <%= mission.title %> <small>(<%= statusLabel %>)</small>
@@ -16,12 +16,42 @@
         <select name="status">
           <option value="active" <%= statusKey==='active' ? 'selected' : '' %>>Actif</option>
           <option value="en_cours" <%= statusKey==='en_cours' ? 'selected' : '' %>>En cours</option>
-          <option value="terminee" <%= (statusKey==='terminee' || statusKey==='done') ? 'selected' : '' %>>Terminé</option>
+          <option value="verrouille" <%= statusKey==='verrouille' ? 'selected' : '' %>>Verrouillé</option>
+          <option value="terminee" <%= statusKey==='terminee' ? 'selected' : '' %>>Terminé</option>
+          <option value="archivee" <%= statusKey==='archivee' ? 'selected' : '' %>>Archivé</option>
         </select>
         <button class="btn btn-secondary" type="submit">Mettre à jour</button>
       </form>
     <% } %>
   </h1>
+
+  <div class="widgets" style="margin:8px 0;">
+    <% if (mission.priority) { %><div class="widget"><div class="k">Priorité</div><div class="v"><%= mission.priority %></div></div><% } %>
+    <% if (mission.difficulty) { %><div class="widget"><div class="k">Difficulté</div><div class="v"><%= mission.difficulty %></div></div><% } %>
+    <% if (mission.zone) { %><div class="widget"><div class="k">Zone</div><div class="v"><%= mission.zone %></div></div><% } %>
+    <% if (mission.tags) { %><div class="widget"><div class="k">Tags</div><div class="v"><%= mission.tags.replace(/,/g,' ').trim() %></div></div><% } %>
+    <% if (mission.deadlineAt) { %><div class="widget"><div class="k">Échéance</div><div class="v"><%= mission.deadlineAt %></div></div><% } %>
+  </div>
+
+  <% if (mission.deadlineAt) { %>
+    <div class="hint" id="countdown" data-deadline="<%= mission.deadlineAt %>">T-…</div>
+    <script>
+      (function(){
+        try {
+          var el = document.getElementById('countdown');
+          if (!el) return; var d = new Date(el.getAttribute('data-deadline')); if (!d) return;
+          var tick = function(){
+            var now = new Date(); var diff = Math.max(0, d - now);
+            var sec = Math.floor(diff/1000); var h = Math.floor(sec/3600); var m = Math.floor((sec%3600)/60); var s = sec%60;
+            el.textContent = 'T-' + String(h).padStart(2,'0') + 'h' + String(m).padStart(2,'0') + 'm' + String(s).padStart(2,'0') + 's';
+            if (diff<=0) clearInterval(iv);
+          };
+          tick(); var iv = setInterval(tick, 1000);
+        } catch(_){}
+      })();
+    </script>
+  <% } %>
+
   <pre class="mission"><%= mission.content %></pre>
 
   <h2>Réponses</h2>
