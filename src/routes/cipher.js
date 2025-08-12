@@ -102,12 +102,8 @@ router.get('/key', async (req, res) => {
       'O': 'Ⰴ', 'P': 'Ⱈ', 'Q': 'Ⰿ', 'R': 'Ⱀ', 'S': 'Ⱄ', 'T': 'Ⰳ', 'U': 'Ⱆ',
       'V': 'Ⰲ', 'W': 'Ⱂ', 'X': 'Ⰰ', 'Y': 'Ⰹ', 'Z': 'Ⱌ'
     };
-    const db = await getDatabase();
-    const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
-    let mapping = defaultMap;
-    if (row && row.value) {
-      try { const parsed = JSON.parse(row.value); if (parsed && typeof parsed === 'object') mapping = parsed; } catch {}
-    }
+    // For the MR key page, always use the canonical mapping provided
+    const mapping = defaultMap;
     return res.render('cipher/key', { title: 'Clé de chiffrement', mapping });
   } catch (e) {
     return res.status(500).send('Erreur serveur');
