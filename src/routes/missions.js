@@ -2,7 +2,7 @@ const express = require('express');
 const dayjs = require('dayjs');
 const router = express.Router();
 const { getDatabase } = require('../config/database');
-const PDFDocument = require('pdfkit');
+
 
 // List missions
 router.get('/', async (req, res) => {
@@ -157,39 +157,6 @@ router.post('/:id/vote', async (req, res) => {
   } catch { return res.redirect('back'); }
 });
 
-// PDF Report
-router.get('/:id/report.pdf', async (req, res) => {
-  try {
-    const db = await getDatabase();
-    const mission = await db.get('SELECT * FROM missions WHERE id = ?', req.params.id);
-    if (!mission) return res.status(404).send('Introuvable');
-    const milestones = await db.all('SELECT * FROM mission_milestones WHERE missionId = ? ORDER BY id ASC', req.params.id);
-    const assignments = await db.all('SELECT code FROM mission_assignments WHERE missionId = ? ORDER BY id ASC', req.params.id);
-    const deps = await db.all('SELECT m.title FROM mission_dependencies d JOIN missions m ON m.id = d.dependsOnId WHERE d.missionId = ?', req.params.id);
-    const responses = await db.all('SELECT code, content, createdAt FROM mission_responses WHERE missionId = ? ORDER BY id ASC', req.params.id);
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="mission-${req.params.id}.pdf"`);
-    const doc = new PDFDocument({ margin: 36 });
-    doc.pipe(res);
-    doc.fontSize(18).text(`Dossier Opération #${req.params.id}: ${mission.title}`, { underline: true });
-    doc.moveDown();
-    doc.fontSize(12).text(`Statut: ${mission.status} | Priorité: ${mission.priority||'-'} | Difficulté: ${mission.difficulty||'-'}`);
-    if (mission.zone) doc.text(`Zone: ${mission.zone}`);
-    if (mission.deadlineAt) doc.text(`Échéance: ${mission.deadlineAt}`);
-    doc.moveDown();
-    doc.fontSize(12).text('Brief:', { bold: true });
-    doc.moveDown(0.2);
-    doc.font('Courier').fontSize(11).text(mission.content || '(vide)');
-    doc.font('Helvetica');
-    doc.moveDown();
-    if (deps.length) { doc.text('Dépendances:'); deps.forEach(d => doc.text(` - ${d.title}`)); doc.moveDown(); }
-    if (assignments.length) { doc.text('Assignations:'); assignments.forEach(a => doc.text(` - ${a.code}`)); doc.moveDown(); }
-    if (milestones.length) { doc.text('Jalons:'); milestones.forEach(m => doc.text(` - ${m.title} ${m.doneAt?'(fait)':''}`)); doc.moveDown(); }
-    if (responses.length) { doc.text('Réponses:'); responses.forEach(r => doc.text(` - ${r.code}: ${r.content}`)); doc.moveDown(); }
-    doc.end();
-  } catch (e) { return res.status(500).send('Erreur génération PDF'); }
-});
 
 // Respond to mission
 router.post('/:id/respond', async (req, res) => {

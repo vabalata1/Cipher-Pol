@@ -47,13 +47,13 @@
       <article class="mission-card">
         <div class="header">
           <a class="title" href="/missions/<%= m.id %>"><%= m.title %></a>
-          <small class="hint">
-            statut: <%= statusLabel %>
-            <% if (m.difficulty) { %> · diff.: <%= m.difficulty %><% } %>
-            <% if (m.priority) { %> · prio.: <%= m.priority %><% } %>
-            <% if (m.zone) { %> · zone: <%= m.zone %><% } %>
-            <% if (m.deadlineAt) { %> · échéance: <%= m.deadlineAt %><% } %>
-          </small>
+          <div class="meta-chips">
+            <span class="chip chip-status"><%= statusLabel %></span>
+            <% if (m.difficulty) { %><span class="chip chip-diff"><%= m.difficulty %></span><% } %>
+            <% if (m.priority) { %><span class="chip chip-prio"><%= m.priority %></span><% } %>
+            <% if (m.zone) { %><span class="chip chip-zone"><%= m.zone %></span><% } %>
+            <% if (m.deadlineAt) { %><span class="chip chip-deadline">Échéance</span><% } %>
+          </div>
         </div>
         <% if (m.excerpt) { %>
           <p class="excerpt"><%= m.excerpt %>…</p>

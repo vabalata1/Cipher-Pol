@@ -54,8 +54,12 @@
     </script>
   <% } %>
 
-  <div class="actions">
-    <a class="btn btn-secondary" href="/missions/<%= mission.id %>/report.pdf" target="_blank">Dossier PDF</a>
+  <div class="meta-chips">
+    <span class="chip chip-status"><%= statusLabel %></span>
+    <% if (mission.difficulty) { %><span class="chip chip-diff"><%= mission.difficulty %></span><% } %>
+    <% if (mission.priority) { %><span class="chip chip-prio"><%= mission.priority %></span><% } %>
+    <% if (mission.zone) { %><span class="chip chip-zone"><%= mission.zone %></span><% } %>
+    <% if (mission.deadlineAt) { %><span class="chip chip-deadline">Échéance</span><% } %>
   </div>
 
   <% const isMRAdmin = currentUser && (currentUser.isAdmin || currentUser.code==='MR.0' || currentUser.code==='MR.1'); %>

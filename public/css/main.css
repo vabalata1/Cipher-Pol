@@ -500,3 +500,12 @@ img, video, canvas, svg {
 
 /* (removed brief/alerts/widgets styles) */
 
+/* Meta chips */
+.meta-chips { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.chip { display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; font-size:.78em; border:1px solid var(--border); background:#12161d; color:#b9c2cf; }
+.chip-status { border-color:#2a313c; }
+.chip-diff { border-color:#4f3a6a; background:#17121f; color:#c9b3e1; }
+.chip-prio { border-color:#6a3a3a; background:#1f1212; color:#ff9a9a; }
+.chip-zone { border-color:#2a4a5a; background:#12191b; color:#9ad7ff; }
+.chip-deadline { border-color:#5a4a2a; background:#1b1712; color:#ffd27a; }
+
