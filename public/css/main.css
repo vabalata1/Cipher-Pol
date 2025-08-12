@@ -509,3 +509,14 @@ img, video, canvas, svg {
 .chip-zone { border-color:#2a4a5a; background:#12191b; color:#9ad7ff; }
 .chip-deadline { border-color:#5a4a2a; background:#1b1712; color:#ffd27a; }
 
+/* Rumors cards */
+.rumor-list { display:grid; grid-template-columns: 1fr; gap:12px; }
+.rumor-card { background: var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px; }
+.rumor-meta { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:6px; color: var(--muted); }
+.rumor-meta .by { margin-left:auto; color:#8aa0ba; font-size:.85em; }
+.rumor-content { color: var(--text); white-space: pre-wrap; }
+.chip-cred { border-color:#2a313c; background:#12161d; color:#c8d2e1; }
+.chip-cred.verifie, .chip-cred.vérifie { border-color:#2f3d2f; background:#141c14; color:#9fe29f; }
+.chip-cred.potentiellement-faux { border-color:#5a4a2a; background:#1b1712; color:#ffd27a; }
+.chip-cred.rumeur { border-color:#2a4a5a; background:#12191b; color:#9ad7ff; }
+

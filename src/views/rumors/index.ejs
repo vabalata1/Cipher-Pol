@@ -1,20 +1,24 @@
 <section>
   <h1>Tableau des infos & rumeurs</h1>
   <p class="actions"><a class="btn btn-primary" href="/rumors/new">Poster</a></p>
-  <ul>
+  <div class="rumor-list">
     <% rumors.forEach(r => { %>
-      <li>
-        <strong>[<%= r.codeTag %>]</strong> <%= r.content %>
-        <small>(<%= r.credibility %>) — par <%= r.code %></small>
+      <article class="rumor-card">
+        <div class="rumor-meta">
+          <span class="chip chip-tag">[<%= r.codeTag %>]</span>
+          <span class="chip chip-cred <%= (r.credibility||'').toLowerCase().replace(/\s+/g,'-') %>"><%= r.credibility %></span>
+          <span class="by">par <%= r.code %></span>
+        </div>
+        <div class="rumor-content"><%= r.content %></div>
         <% if (currentUser?.isAdmin) { %>
-          <form class="actions" method="post" action="/rumors/delete/<%= r.id %>" onsubmit="return confirm('Supprimer cette entrée ?');" style="display:inline-block;margin-left:8px;">
+          <form class="actions" method="post" action="/rumors/delete/<%= r.id %>" onsubmit="return confirm('Supprimer cette entrée ?');">
             <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
             <button class="btn btn-outline" type="submit">Supprimer</button>
           </form>
         <% } %>
-      </li>
+      </article>
     <% }) %>
-  </ul>
+  </div>
 </section>
 
 
