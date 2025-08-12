@@ -430,3 +430,11 @@ img, video, canvas, svg {
   opacity: .9;
 }
 
+/* Missions page list */
+.mission-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+

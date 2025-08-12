@@ -6,7 +6,18 @@ const { getDatabase } = require('../config/database');
 // List missions
 router.get('/', async (req, res) => {
   const db = await getDatabase();
-  const missions = await db.all('SELECT * FROM missions ORDER BY id DESC');
+  const missions = await db.all(`
+    SELECT m.id, m.title, m.status, m.createdAt,
+           substr(m.content, 1, 160) AS excerpt,
+           COALESCE(r.cnt, 0) AS responsesCount
+    FROM missions m
+    LEFT JOIN (
+      SELECT missionId, COUNT(*) as cnt
+      FROM mission_responses
+      GROUP BY missionId
+    ) r ON r.missionId = m.id
+    ORDER BY m.id DESC
+  `);
   res.render('missions/index', { title: 'Mandats codés', missions });
 });
 

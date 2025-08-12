@@ -3,13 +3,28 @@
   <% if (currentUser?.isAdmin) { %>
     <p class="actions"><a class="btn btn-primary" href="/missions/new">Publier une mission</a></p>
   <% } %>
-  <ul>
-    <% missions.forEach(m => { %>
-      <li>
-        <a href="/missions/<%= m.id %>"><%= m.title %></a> <small>(<%= m.status %>)</small>
-      </li>
+  <div class="mission-list">
+    <% missions.forEach(m => { 
+         const status = (m.status || 'active').toString();
+         const statusLower = status.toLowerCase();
+         const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+    %>
+      <article class="mission-card">
+        <div class="header">
+          <a class="title" href="/missions/<%= m.id %>"><%= m.title %></a>
+          <span class="status-badge status-<%= statusLower %>"><%= statusLabel %></span>
+        </div>
+        <% if (m.excerpt) { %>
+          <p class="excerpt"><%= m.excerpt %>…</p>
+        <% } %>
+        <div class="hint">
+          <span>#<%= m.id %></span>
+          · <span><%= m.createdAt %></span>
+          · <span><%= m.responsesCount %> réponse<%= m.responsesCount === 1 ? '' : 's' %></span>
+        </div>
+      </article>
     <% }) %>
-  </ul>
+  </div>
 </section>
 
 
