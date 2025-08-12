@@ -1,6 +1,18 @@
 :root { color-scheme: dark; }
 *, *::before, *::after { box-sizing: border-box; }
-body.theme-dark { background: #0b0d10; color: #d6d9de; font-family: system-ui, Segoe UI, Roboto, sans-serif; }
+/* Identity: palette and typography */
+body.theme-dark {
+  --bg: #0b0d10;
+  --panel: #0f1216;
+  --border: #1b2027;
+  --text: #d6d9de;
+  --muted: #9fb0c8;
+  --accent: #ffd700; /* doré cryptique */
+  --neon: #54ffe4;  /* néon discret */
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans", system-ui, Segoe UI, Roboto, sans-serif;
+}
 .topbar { display: flex; gap: 16px; align-items: center; padding: 12px 16px; background: #0f1216; border-bottom: 1px solid #1b2027; }
 .topbar .brand { font-weight: 700; letter-spacing: .06em; }
 .topbar nav a {
@@ -258,15 +270,51 @@ ul li { margin: 8px 0; }
   color: #ffd700;
 }
 
+/* Classification badges */
+.badge-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: #11151b;
+  color: var(--text);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+.badge-class .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.badge-class.confidentiel .dot { background: #4aa3ff; }
+.badge-class.secret .dot { background: #ff7a4a; }
+.badge-class.top-secret .dot { background: #ff3654; box-shadow: 0 0 8px rgba(255,54,84,.45); }
 
+/* Badge glow (subtle) */
+.badge-glow { box-shadow: 0 0 10px rgba(84,255,228,.18), inset 0 0 12px rgba(84,255,228,.08); }
 
+/* Radar sweep animation */
+.radar {
+  position: relative;
+  overflow: hidden;
+}
+.radar::after {
+  content: "";
+  position: absolute;
+  inset: -40% -40% -40% -40%;
+  background: conic-gradient(from 0deg, rgba(84,255,228,0.18), rgba(84,255,228,0) 60%);
+  animation: sweep 6s linear infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+@keyframes sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
-
-
-
-
-
-
+/* Terminal click sound cue affordance (used via JS) */
+.clicky { transition: transform .03s ease; }
+.clicky:active { transform: translateY(1px); }
 
 
 @media (max-width: 768px) {

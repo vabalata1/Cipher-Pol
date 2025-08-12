@@ -9,8 +9,13 @@
     <script src="/public/js/lightbox.js"></script>
   </head>
   <body class="theme-dark" data-user-code="<%= currentUser ? currentUser.code : '' %>">
-    <header class="topbar">
-      <div class="brand">❖ Cipher</div>
+    <header class="topbar radar">
+      <div class="brand clicky">
+        ❖ Cipher
+        <span class="badge-class top-secret badge-glow" title="Classification">
+          <span class="dot"></span> TOP SECRET
+        </span>
+      </div>
       <% if (currentUser) { %>
       <nav>
         <a href="/">Accueil</a>
