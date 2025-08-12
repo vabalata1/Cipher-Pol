@@ -293,28 +293,7 @@ ul li { margin: 8px 0; }
 /* Badge glow (subtle) */
 .badge-glow { box-shadow: 0 0 10px rgba(84,255,228,.18), inset 0 0 12px rgba(84,255,228,.08); }
 
-/* Radar sweep animation */
-.radar {
-  position: relative;
-  overflow: hidden;
-}
-.radar::after {
-  content: "";
-  position: absolute;
-  inset: -40% -40% -40% -40%;
-  background: conic-gradient(from 0deg, rgba(84,255,228,0.18), rgba(84,255,228,0) 60%);
-  animation: sweep 6s linear infinite;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-@keyframes sweep {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Terminal click sound cue affordance (used via JS) */
-.clicky { transition: transform .03s ease; }
-.clicky:active { transform: translateY(1px); }
+/* (removed radar and clicky styles) */
 
 
 @media (max-width: 768px) {

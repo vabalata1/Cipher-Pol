@@ -17,26 +17,6 @@
     }
   } catch (_) {}
 
-  // Minimal terminal click sound on brand click
-  try {
-    var brand = document.querySelector('.topbar .brand');
-    if (brand && window.AudioContext) {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      var playClick = function() {
-        var o = ctx.createOscillator();
-        var g = ctx.createGain();
-        o.type = 'square';
-        o.frequency.value = 1600;
-        g.gain.value = 0.02;
-        o.connect(g); g.connect(ctx.destination);
-        o.start();
-        setTimeout(function(){ o.stop(); }, 40);
-      };
-      brand.addEventListener('click', function(){
-        // On first user gesture, resume suspended context in some browsers
-        if (ctx.state === 'suspended') { ctx.resume(); }
-        playClick();
-      });
-    }
-  } catch (_) {}
+  // (removed brand click sound)
+
 })();
