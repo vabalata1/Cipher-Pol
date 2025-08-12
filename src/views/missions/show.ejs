@@ -54,6 +54,19 @@
     </script>
   <% } %>
 
+  <% if (currentUser && (currentUser.code==='MR.0' || currentUser.code==='MR.1')) { %>
+    <form class="actions" method="post" action="/missions/<%= mission.id %>/vote">
+      <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
+      <select name="value">
+        <option value="basse">Basse</option>
+        <option value="normale">Normale</option>
+        <option value="haute">Haute</option>
+        <option value="primordiale">Primordiale</option>
+      </select>
+      <button class="btn btn-outline" type="submit">Voter priorité</button>
+    </form>
+  <% } %>
+
   <div class="meta-chips">
     <span class="chip chip-status"><%= statusLabel %></span>
     <% if (mission.difficulty) { %><span class="chip chip-diff"><%= mission.difficulty %></span><% } %>
