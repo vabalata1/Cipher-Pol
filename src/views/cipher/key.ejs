@@ -1,28 +1,34 @@
-<main>
-  <div class="cipher-container">
-    <h1>Clé de chiffrement (MR)</h1>
-    <div class="cipher-table" id="cipherTable" data-map="<%= (mapping ? JSON.stringify(mapping).replace(/\"/g,'&quot;') : '') %>"></div>
+<div class="key-page">
+  <div class="container">
+    <h1>⛪ SYSTÈME DE CHIFFREMENT GLAGOLITIQUE ⛪</h1>
 
-    <div class="cipher-tools">
-      <div class="cipher-tool-section">
+    <div class="cipher-table" id="cipherTable"></div>
+
+    <div class="tools">
+      <div class="tool-section">
         <h3>📜 ENCODER</h3>
         <textarea id="plainText" placeholder="Tapez votre message ici..."></textarea>
-        <div class="cipher-button-container">
-          <button type="button" id="encodeBtn" class="btn btn-primary">⚔️ Encoder</button>
-          <button type="button" id="clearPlainBtn" class="btn btn-secondary">🗑️ Effacer</button>
+        <div class="button-container">
+          <button id="encodeBtn">⚔️ Encoder</button>
+          <button id="clearPlainBtn" class="clear-button">🗑️ Effacer</button>
         </div>
       </div>
 
-      <div class="cipher-tool-section">
+      <div class="tool-section">
         <h3>🔓 DÉCODER</h3>
-        <textarea id="cipherText" placeholder="Tapez votre message ici..."></textarea>
-        <div class="cipher-button-container">
-          <button type="button" id="decodeBtn" class="btn btn-primary">🗝️ Décoder</button>
-          <button type="button" id="clearCipherBtn" class="btn btn-secondary">🗑️ Effacer</button>
+        <textarea id="cipherText" placeholder="Tapez votre message glagolitique ici..."></textarea>
+        <div class="button-container">
+          <button id="decodeBtn">🗝️ Décoder</button>
+          <button id="clearCipherBtn" class="clear-button">🗑️ Effacer</button>
         </div>
       </div>
     </div>
+
+    <div class="info-section">
+      <p><strong>À propos de l'alphabet glagolitique :</strong></p>
+      <p>Premier système d'écriture slave créé au IXe siècle par saint Cyrille. Ces caractères anciens donnent à vos messages un aspect mystique et historique, parfait pour un chiffrement secret !</p>
+    </div>
   </div>
-</main>
+</div>
 
 <script src="/public/js/cipher_key.js"></script>
