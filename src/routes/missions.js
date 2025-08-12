@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
     ${where}
     ORDER BY ${order}
   `, ...params);
-  res.render('missions/index', { title: 'Mandats codés', missions });
+  res.render('missions/index', { title: 'Mandats codés', missions, filters: { status, difficulty, priority, zone, tag, sort } });
 });
 
 // Create mission (MR.0 only -> isAdmin)

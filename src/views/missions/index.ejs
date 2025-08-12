@@ -7,32 +7,32 @@
   <form class="actions" method="get" action="/missions" style="flex-wrap:wrap; gap:8px;">
     <select name="status">
       <option value="">Statut</option>
-      <option value="active" <%= (req?.query?.status==='active')?'selected':'' %>>Actif</option>
-      <option value="en_cours" <%= (req?.query?.status==='en_cours')?'selected':'' %>>En cours</option>
-      <option value="verrouille" <%= (req?.query?.status==='verrouille')?'selected':'' %>>Verrouillé</option>
-      <option value="terminee" <%= (req?.query?.status==='terminee')?'selected':'' %>>Terminé</option>
-      <option value="archivee" <%= (req?.query?.status==='archivee')?'selected':'' %>>Archivé</option>
+      <option value="active" <%= (filters && filters.status==='active')?'selected':'' %>>Actif</option>
+      <option value="en_cours" <%= (filters && filters.status==='en_cours')?'selected':'' %>>En cours</option>
+      <option value="verrouille" <%= (filters && filters.status==='verrouille')?'selected':'' %>>Verrouillé</option>
+      <option value="terminee" <%= (filters && filters.status==='terminee')?'selected':'' %>>Terminé</option>
+      <option value="archivee" <%= (filters && filters.status==='archivee')?'selected':'' %>>Archivé</option>
     </select>
     <select name="difficulty">
       <option value="">Difficulté</option>
-      <option value="faible">Faible</option>
-      <option value="moyenne">Moyenne</option>
-      <option value="elevee">Élevée</option>
-      <option value="critique">Critique</option>
+      <option value="faible" <%= (filters && filters.difficulty==='faible')?'selected':'' %>>Faible</option>
+      <option value="moyenne" <%= (filters && filters.difficulty==='moyenne')?'selected':'' %>>Moyenne</option>
+      <option value="elevee" <%= (filters && filters.difficulty==='elevee')?'selected':'' %>>Élevée</option>
+      <option value="critique" <%= (filters && filters.difficulty==='critique')?'selected':'' %>>Critique</option>
     </select>
     <select name="priority">
       <option value="">Priorité</option>
-      <option value="basse">Basse</option>
-      <option value="normale">Normale</option>
-      <option value="haute">Haute</option>
-      <option value="alpha">ALPHA</option>
+      <option value="basse" <%= (filters && filters.priority==='basse')?'selected':'' %>>Basse</option>
+      <option value="normale" <%= (filters && filters.priority==='normale')?'selected':'' %>>Normale</option>
+      <option value="haute" <%= (filters && filters.priority==='haute')?'selected':'' %>>Haute</option>
+      <option value="alpha" <%= (filters && filters.priority==='alpha')?'selected':'' %>>ALPHA</option>
     </select>
-    <input name="zone" placeholder="Zone" value="<%= req?.query?.zone||'' %>" />
-    <input name="tag" placeholder="Tag" value="<%= req?.query?.tag||'' %>" />
+    <input name="zone" placeholder="Zone" value="<%= (filters && filters.zone) || '' %>" />
+    <input name="tag" placeholder="Tag" value="<%= (filters && filters.tag) || '' %>" />
     <select name="sort">
       <option value="">Trier</option>
-      <option value="priority" <%= (req?.query?.sort==='priority')?'selected':'' %>>Priorité</option>
-      <option value="deadline" <%= (req?.query?.sort==='deadline')?'selected':'' %>>Échéance</option>
+      <option value="priority" <%= (filters && filters.sort==='priority')?'selected':'' %>>Priorité</option>
+      <option value="deadline" <%= (filters && filters.sort==='deadline')?'selected':'' %>>Échéance</option>
     </select>
     <button class="btn btn-outline" type="submit">Filtrer</button>
     <a class="btn btn-secondary" href="/missions">Réinitialiser</a>
