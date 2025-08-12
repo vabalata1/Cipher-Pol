@@ -481,5 +481,21 @@ img, video, canvas, svg {
   margin-top: 12px;
 }
 
+/* Filters bar */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 6px 0;
+}
+.filters select,
+.filters input {
+  min-width: 140px;
+}
+.filters .btn { flex: 0 0 auto; }
+
 /* (removed brief/alerts/widgets styles) */
 

@@ -4,7 +4,7 @@
     <p class="actions"><a class="btn btn-primary" href="/missions/new">Publier une mission</a></p>
   <% } %>
 
-  <form class="actions" method="get" action="/missions" style="flex-wrap:wrap; gap:8px;">
+  <form class="filters" method="get" action="/missions">
     <select name="status">
       <option value="">Statut</option>
       <option value="active" <%= (filters && filters.status==='active')?'selected':'' %>>Actif</option>

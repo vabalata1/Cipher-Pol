@@ -58,7 +58,7 @@ router.get('/:id', async (req, res) => {
   const mission = await db.get('SELECT * FROM missions WHERE id = ?', req.params.id);
   if (!mission) return res.status(404).send('Introuvable');
   const responses = await db.all('SELECT * FROM mission_responses WHERE missionId = ? ORDER BY id DESC', req.params.id);
-  const milestones = await db.all('SELECT * FROM mission_milestones WHERE missionId = ? ORDER BY (doneAt IS NULL) DESC, COALESCE(dueAt, "9999") ASC, id ASC', req.params.id);
+  const milestones = await db.all("SELECT * FROM mission_milestones WHERE missionId = ? ORDER BY (doneAt IS NULL) DESC, COALESCE(dueAt, '9999-12-31T23:59:59Z') ASC, id ASC", req.params.id);
   const assignments = await db.all('SELECT code FROM mission_assignments WHERE missionId = ? ORDER BY id ASC', req.params.id);
   const binomes = await db.all('SELECT codeA, codeB FROM mission_binomes WHERE missionId = ? ORDER BY id ASC', req.params.id);
   const deps = await db.all('SELECT d.dependsOnId as id, m.title FROM mission_dependencies d JOIN missions m ON m.id = d.dependsOnId WHERE d.missionId = ?', req.params.id);
