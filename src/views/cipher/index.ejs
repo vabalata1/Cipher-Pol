@@ -6,7 +6,7 @@
       <% } %>
     </div>
     
-    <div class="cipher-table" id="cipherTable"></div>
+    <div class="cipher-table" id="cipherTable" data-map="<%= (savedCipherMap ? JSON.stringify(savedCipherMap).replace(/\"/g,'&quot;') : '') %>"></div>
     
     <div class="cipher-tools">
       <div class="cipher-tool-section">
@@ -31,7 +31,4 @@
       </div>
 </main>
 
-<script>
-  window.__SAVED_CIPHER_MAP__ = <%- JSON.stringify(savedCipherMap || null) %>;
-</script>
 <script src="/public/js/cipher.js"></script>

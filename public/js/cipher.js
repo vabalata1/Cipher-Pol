@@ -94,16 +94,18 @@ window.shuffleMapping = shuffleMapping;
 
 // Initialiser: tableau + écouteurs boutons et inputs
 function initCipher() {
-  // Load saved mapping if provided by server
-  if (window.__SAVED_CIPHER_MAP__) {
-    try {
-      const obj = window.__SAVED_CIPHER_MAP__;
+  // Load saved mapping if provided by server via data attribute
+  try {
+    const tableEl = document.getElementById('cipherTable');
+    const data = tableEl ? tableEl.getAttribute('data-map') : '';
+    if (data) {
+      const obj = JSON.parse(data);
       if (obj && typeof obj === 'object') {
         cipherMap = obj;
         rebuildDecodeMap();
       }
-    } catch {}
-  }
+    }
+  } catch {}
   displayCipherTable();
 
   const plain = document.getElementById('plainText');
