@@ -48,6 +48,7 @@ initPassport(passport);
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+app.set('io', io);
 
 // Running behind a proxy (e.g., Render): trust X-Forwarded-* headers
 app.set('trust proxy', 1);
@@ -114,6 +115,23 @@ app.use('/files', ensureAuthenticated, fileRoutes);
 app.use('/users', ensureAuthenticated, require('./routes/users'));
 app.use('/communications', ensureAuthenticated, require('./routes/communications'));
 app.use('/cipher', ensureAuthenticated, require('./routes/cipher'));
+
+// Simple admin alert emitter
+app.post('/admin/alert', ensureAuthenticated, (req, res) => {
+  try {
+    const user = req.user;
+    if (!(user && (user.isAdmin || user.code === 'MR.0' || user.code === 'MR.1'))) {
+      return res.status(403).send('Accès refusé');
+    }
+    const level = (req.body.level || 'info').toString();
+    const text = (req.body.text || '').toString().trim();
+    if (!text) return res.redirect('back');
+    io.emit('alert', { level, text, by: user.code, at: new Date().toISOString() });
+    return res.redirect('back');
+  } catch (e) {
+    return res.redirect('back');
+  }
+});
 
 // Socket.io chat
 io.use((socket, next) => {

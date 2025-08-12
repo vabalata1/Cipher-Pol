@@ -481,3 +481,16 @@ img, video, canvas, svg {
   margin-top: 12px;
 }
 
+/* Home: brief, alerts, widgets */
+.brief { list-style: none; padding: 0; margin: 0; }
+.brief li { margin: 6px 0; color: var(--text); }
+.alerts { list-style: none; padding: 0; margin: 0; }
+.alerts li { margin: 6px 0; padding: 8px; border:1px solid var(--border); border-radius:8px; background: #12161d; }
+.alerts li.alert-critical { border-color:#5a2a2a; background:#1b1212; color:#ff9a9a; }
+.alerts li.alert-warning { border-color:#5a4a2a; background:#1b1712; color:#ffd27a; }
+.alerts li.alert-info { border-color:#2a4a5a; background:#12191b; color:#9ad7ff; }
+.widgets { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; }
+.widget { background: var(--panel); border:1px solid var(--border); border-radius:8px; padding:10px; }
+.widget .k { color: var(--muted); font-size:.85em; }
+.widget .v { color: var(--text); font-weight: 800; font-size: 1.2em; margin-top: 4px; }
+
