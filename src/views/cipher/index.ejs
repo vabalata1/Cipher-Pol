@@ -2,7 +2,10 @@
   <div class="cipher-container">
     <div class="cipher-header">
       <% if (currentUser && (currentUser.code === 'MR.0' || currentUser.code === 'MR.1')) { %>
-      <div class="actions"><button type="button" id="shuffleBtn" class="btn btn-outline">Mélanger</button></div>
+      <div class="actions">
+        <button type="button" id="shuffleBtn" class="btn btn-outline">Mélanger</button>
+        <button type="button" id="saveMapBtn" class="btn btn-primary">Enregistrer</button>
+      </div>
       <% } %>
     </div>
     

@@ -132,6 +132,17 @@ function initCipher() {
     } catch {}
   });
 
+  const saveBtn = document.getElementById('saveMapBtn');
+  if (saveBtn) saveBtn.addEventListener('click', async function() {
+    try {
+      await fetch('/cipher/shuffle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapping: cipherMap })
+      });
+    } catch {}
+  });
+
   if (plain) {
     plain.addEventListener('input', function () {
       if (this.value.trim()) {
