@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
   const where = clauses.length ? 'WHERE ' + clauses.join(' AND ') : '';
   let order = 'm.id DESC';
-  if (sort === 'priority') order = "CASE m.priority WHEN 'primordiale' THEN 1 WHEN 'haute' THEN 2 WHEN 'normale' THEN 3 ELSE 4 END, m.id DESC";
+  if (sort === 'priority') order = "CASE m.priority WHEN 'primordial' THEN 1 WHEN 'haute' THEN 2 WHEN 'normale' THEN 3 ELSE 4 END, m.id DESC";
   if (sort === 'deadline') order = "m.deadlineAt IS NULL, m.deadlineAt ASC";
   const missions = await db.all(`
     SELECT m.id, m.title, m.status, m.createdAt, m.difficulty, m.priority, m.zone, m.deadlineAt,
@@ -32,6 +32,8 @@ router.get('/', async (req, res) => {
     ${where}
     ORDER BY ${order}
   `, ...params);
+  // Normalize casing for display in views
+  missions.forEach(m => { if (m.priority) m.priority = (m.priority==='primordial'?'Primordial':m.priority.charAt(0).toUpperCase()+m.priority.slice(1)); if (m.difficulty) m.difficulty = m.difficulty.charAt(0).toUpperCase()+m.difficulty.slice(1); });
   res.render('missions/index', { title: 'Mandats codés', missions, filters: { status, difficulty, priority, zone, sort } });
 });
 
@@ -43,11 +45,11 @@ router.get('/new', (req, res) => {
 
 router.post('/', async (req, res) => {
   if (!req.user?.isAdmin) return res.status(403).send('Accès refusé');
-  const { title, content, status, difficulty, priority, zone, tags, deadlineAt } = req.body;
+  const { title, content, status, difficulty, priority, zone, tags, deadlineAt } = req.body; const normPriority = (priority||'').toString().toLowerCase()==='primordiale' ? 'primordial' : (priority||null); const normDifficulty = (difficulty||null);
   if (!title || !content) return res.redirect('/missions');
   const db = await getDatabase();
   const stmt = await db.prepare('INSERT INTO missions (title, content, status, difficulty, priority, zone, tags, deadlineAt, createdBy, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-  await stmt.run(title.trim(), content.trim(), (status||'active').toLowerCase(), difficulty||null, priority||null, zone||null, tags ? (','+tags.replace(/\s+/g, '')+',') : null, deadlineAt||null, req.user.id, dayjs().toISOString());
+  await stmt.run(title.trim(), content.trim(), (status||'active').toLowerCase(), normDifficulty, normPriority, zone||null, tags ? (','+tags.replace(/\s+/g, '')+',') : null, deadlineAt||null, req.user.id, dayjs().toISOString());
   await stmt.finalize();
   res.redirect('/missions');
 });
