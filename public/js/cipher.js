@@ -92,17 +92,34 @@ window.clearPlain = clearPlain;
 window.clearCipher = clearCipher;
 window.shuffleMapping = shuffleMapping;
 
+async function loadSavedMap() {
+  try {
+    const resp = await fetch('/cipher/map', { headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data && typeof data === 'object') {
+      cipherMap = data;
+      rebuildDecodeMap();
+    }
+  } catch {}
+}
+
 // Initialiser: tableau + écouteurs boutons et inputs
-function initCipher() {
-  // Load saved mapping if provided by server via data attribute
+async function initCipher() {
+  // Attempt to load saved mapping from server
+  await loadSavedMap();
+  // Fallback: load from data attribute if present and nothing loaded
   try {
     const tableEl = document.getElementById('cipherTable');
-    const data = tableEl ? tableEl.getAttribute('data-map') : '';
-    if (data) {
-      const obj = JSON.parse(data);
-      if (obj && typeof obj === 'object') {
-        cipherMap = obj;
-        rebuildDecodeMap();
+    const hasServer = Object.keys(cipherMap||{}).length > 0;
+    if (!hasServer && tableEl) {
+      const data = tableEl.getAttribute('data-map') || '';
+      if (data) {
+        const obj = JSON.parse(data);
+        if (obj && typeof obj === 'object') {
+          cipherMap = obj;
+          rebuildDecodeMap();
+        }
       }
     }
   } catch {}

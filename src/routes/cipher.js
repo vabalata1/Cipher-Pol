@@ -74,4 +74,16 @@ router.post('/shuffle', async (req, res) => {
   }
 });
 
+// GET /cipher/map - return saved mapping JSON
+router.get('/map', async (req, res) => {
+  try {
+    const db = await getDatabase();
+    const row = await db.get('SELECT value FROM app_settings WHERE key = ?', 'cipher_map');
+    if (!row || !row.value) return res.json(null);
+    try { return res.json(JSON.parse(row.value)); } catch { return res.json(null); }
+  } catch (e) {
+    return res.status(500).json(null);
+  }
+});
+
 module.exports = router;
