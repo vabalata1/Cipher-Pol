@@ -153,6 +153,13 @@ async function getSqliteDatabase() {
         FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE,
         FOREIGN KEY(dependsOnId) REFERENCES missions(id) ON DELETE CASCADE
       );
+      CREATE TABLE IF NOT EXISTS mission_binomes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        missionId INTEGER NOT NULL,
+        codeA TEXT NOT NULL,
+        codeB TEXT NOT NULL,
+        FOREIGN KEY(missionId) REFERENCES missions(id) ON DELETE CASCADE
+      );
     `);
   } catch {}
   return db;
@@ -255,6 +262,12 @@ async function getPostgresDatabase() {
       id SERIAL PRIMARY KEY,
       missionId INTEGER NOT NULL,
       dependsOnId INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS mission_binomes (
+      id SERIAL PRIMARY KEY,
+      missionId INTEGER NOT NULL,
+      codeA TEXT NOT NULL,
+      codeB TEXT NOT NULL
     );
   `);
   // Add columns if missing (Postgres)
