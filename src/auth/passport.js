@@ -22,8 +22,11 @@ module.exports = function initPassport(passportInstance) {
         if (!user) return done(null, false, { message: 'Identifiants invalides' });
         const hash = user.passwordHash || user.passwordhash;
         if (!hash) return done(null, false, { message: 'Identifiants invalides' });
-        const ok = await bcrypt.compare(password, hash);
-        if (!ok) return done(null, false, { message: 'Identifiants invalides' });
+        // Try as-is, then lowercase for case-insensitive acceptance
+        const provided = (password ?? '').toString();
+        const okDirect = await bcrypt.compare(provided, hash);
+        const okLower = okDirect ? true : await bcrypt.compare(provided.toLowerCase(), hash);
+        if (!okLower) return done(null, false, { message: 'Identifiants invalides' });
         const isAdmin = !!(user.isAdmin ?? user.isadmin) || user.code === 'MR.0' || user.code === 'MR.1';
         return done(null, { id: user.id, code: user.code, role: user.role, isAdmin });
       } catch (e) {

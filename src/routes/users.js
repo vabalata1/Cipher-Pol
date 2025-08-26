@@ -28,7 +28,8 @@ router.post('/:id/password', requireAdmin, async (req, res) => {
     const user = await db.get('SELECT id, code FROM users WHERE id = ?', id);
     if (!user) return res.status(404).send("Utilisateur introuvable");
 
-    const hash = await bcrypt.hash(effectivePassword, 10);
+    const normalized = effectivePassword.toLowerCase();
+    const hash = await bcrypt.hash(normalized, 10);
     await db.run('UPDATE users SET passwordHash = ? WHERE id = ?', [hash, id]);
 
     return res.redirect('/users');
