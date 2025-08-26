@@ -38,7 +38,7 @@ async function run() {
   };
 
   const defaultPassword = 'change_me_now';
-  const hash = await bcrypt.hash(defaultPassword, 10);
+  const hash = await bcrypt.hash(defaultPassword.toLowerCase(), 10);
 
   const stmt = await db.prepare('INSERT INTO users (code, role, isAdmin, passwordHash, contactCode) VALUES (?, ?, ?, ?, ?)');
   for (const u of users) {

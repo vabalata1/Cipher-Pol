@@ -3,7 +3,8 @@ const { getDatabase } = require('../src/config/database');
 
 async function changePassword(userCode, newPassword) {
   const db = await getDatabase();
-  const hash = await bcrypt.hash(newPassword, 10);
+  const normalized = (newPassword ?? '').toString().toLowerCase();
+  const hash = await bcrypt.hash(normalized, 10);
   
   await db.run('UPDATE users SET passwordHash = ? WHERE code = ?', [hash, userCode]);
   console.log(`Password changed for ${userCode}`);

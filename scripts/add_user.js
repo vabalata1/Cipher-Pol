@@ -18,7 +18,7 @@ async function addUser(code, role = 'Agent', isAdmin) {
   const contactCode = (n !== null && n > 0) ? `MR.${n - 1}` : null;
   const adminFlag = typeof isAdmin === 'number' ? isAdmin : (code === 'MR.0' ? 1 : 0);
   const defaultPassword = process.env.NEW_USER_DEFAULT_PASSWORD || 'change_me_now';
-  const hash = await bcrypt.hash(defaultPassword, 10);
+  const hash = await bcrypt.hash(defaultPassword.toLowerCase(), 10);
 
   const stmt = await db.prepare('INSERT INTO users (code, role, isAdmin, passwordHash, contactCode) VALUES (?, ?, ?, ?, ?)');
   await stmt.run(code, role, adminFlag, hash, contactCode);
