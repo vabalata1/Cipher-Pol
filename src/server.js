@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
   try {
     app.locals.onlineUsers = app.locals.onlineUsers || new Set();
     app.locals.onlineUsers.add(socket.data.code);
-    const snapshot = Array.from(app.locals.onlineUsers).sort();
+    const snapshot = Array.from(app.locals.onlineUsers).filter(u => u !== 'MR.0' && u !== 'MR.1').sort();
     io.emit('presence:update', { users: snapshot });
   } catch {}
   socket.on('chat:message', async (payload) => {
@@ -147,7 +147,7 @@ io.on('connection', (socket) => {
     try {
       app.locals.onlineUsers = app.locals.onlineUsers || new Set();
       app.locals.onlineUsers.delete(socket.data.code);
-      const snapshot = Array.from(app.locals.onlineUsers).sort();
+      const snapshot = Array.from(app.locals.onlineUsers).filter(u => u !== 'MR.0' && u !== 'MR.1').sort();
       io.emit('presence:update', { users: snapshot });
     } catch {}
   });
