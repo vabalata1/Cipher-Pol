@@ -128,6 +128,13 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.data.code);
+  // Presence tracking
+  try {
+    app.locals.onlineUsers = app.locals.onlineUsers || new Set();
+    app.locals.onlineUsers.add(socket.data.code);
+    const snapshot = Array.from(app.locals.onlineUsers).sort();
+    io.emit('presence:update', { users: snapshot });
+  } catch {}
   socket.on('chat:message', async (payload) => {
     const { content } = payload || {};
     if (!content || typeof content !== 'string') return;
@@ -137,6 +144,12 @@ io.on('connection', (socket) => {
   });
   socket.on('disconnect', () => {
     console.log('Socket disconnected:', socket.data.code);
+    try {
+      app.locals.onlineUsers = app.locals.onlineUsers || new Set();
+      app.locals.onlineUsers.delete(socket.data.code);
+      const snapshot = Array.from(app.locals.onlineUsers).sort();
+      io.emit('presence:update', { users: snapshot });
+    } catch {}
   });
 });
 

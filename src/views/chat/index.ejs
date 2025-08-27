@@ -1,17 +1,27 @@
 <section id="chat-root" data-code="<%= currentUser.code %>">
   <h1>Fil clandestin</h1>
-  <form id="chat-form">
-    <% if (csrfToken) { %>
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-    <% } %>
-    <input id="chat-input" placeholder="Dire quelque chose…" />
-    <button>Envoyer</button>
-  </form>
-  <ul id="messages">
-    <% messages.slice().reverse().forEach(m => { %>
-      <li><strong><%= m.code %></strong>: <%= m.content %></li>
-    <% }) %>
-  </ul>
+  <div style="display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start;">
+    <div>
+      <form id="chat-form">
+        <% if (csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <% } %>
+        <input id="chat-input" placeholder="Dire quelque chose…" />
+        <button>Envoyer</button>
+      </form>
+      <ul id="messages">
+        <% messages.slice().reverse().forEach(m => { %>
+          <li><strong><%= m.code %></strong>: <%= m.content %></li>
+        <% }) %>
+      </ul>
+    </div>
+    <aside>
+      <div style="background:#0f1216; border:1px solid #1b2027; border-radius:8px; padding:12px;">
+        <h3 style="margin-top:0;">Connectés</h3>
+        <ul id="online-users" style="list-style:none; padding-left:0; margin:0; display:flex; flex-direction:column; gap:6px;"></ul>
+      </div>
+    </aside>
+  </div>
 </section>
 <script src="/public/js/chat.js"></script>
 
