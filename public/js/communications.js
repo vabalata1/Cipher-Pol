@@ -48,7 +48,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const peer = form.getAttribute('data-peer');
-      const input = form.querySelector('input[name="content"]');
+      const input = form.querySelector('textarea[name="content"]');
       const tokenEl = form.querySelector('input[name="_csrf"]');
       const token = tokenEl ? tokenEl.value : undefined;
       const text = (input.value || '').trim();

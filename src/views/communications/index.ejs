@@ -20,7 +20,7 @@
               <% if (csrfToken) { %>
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <% } %>
-              <input type="text" name="content" placeholder="Écrire à <%= u.code %>..." />
+              <textarea name="content" rows="3" placeholder="Écrire à <%= u.code %>... (Entrée = nouvelle ligne)"></textarea>
               <div class="actions">
                 <button class="btn btn-primary" type="submit">Envoyer</button>
               </div>
