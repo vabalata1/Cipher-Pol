@@ -59,6 +59,17 @@
         await loadBox(peer);
       }
     });
+
+    // Enter to send, Shift+Enter to newline
+    const input = form.querySelector('textarea[name="content"]');
+    if (input) {
+      input.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' && !ev.shiftKey) {
+          ev.preventDefault();
+          form.requestSubmit();
+        }
+      });
+    }
   });
 
   // initial load
