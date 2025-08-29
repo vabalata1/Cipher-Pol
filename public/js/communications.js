@@ -10,6 +10,8 @@
       const data = await res.json();
       const box = document.querySelector(`.messages[data-peer="${peer}"]`);
       if (!box) return;
+      const wasNearBottom = isNearBottom(box);
+      const prevScrollTop = box.scrollTop;
       box.innerHTML = '';
       const msgs = (data.messages || []);
       for (let i = 0; i < msgs.length; i++) {
@@ -24,12 +26,21 @@
         }
         box.appendChild(div);
       }
-      box.scrollTop = box.scrollHeight;
+      if (wasNearBottom) {
+        box.scrollTop = box.scrollHeight;
+      } else {
+        box.scrollTop = prevScrollTop;
+      }
     } catch {}
   }
 
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+  }
+
+  function isNearBottom(el, threshold = 80) {
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    return distanceFromBottom <= threshold;
   }
 
   async function sendMessage(peer, content, csrfToken) {
