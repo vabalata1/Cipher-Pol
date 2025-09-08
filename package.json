@@ -8,7 +8,8 @@
     "seed:users": "node scripts/seed_users.js",
     "backfill:blobs": "node scripts/backfill_blobs.js",
     "migrate:to-sqlite": "node scripts/migrate_to_sqlite.js",
-    "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests yet\" && exit 0",
+    "postinstall": "npm rebuild sqlite3 --build-from-source"
   },
   "keywords": [],
   "author": "",
