@@ -20,6 +20,7 @@ const missionRoutes = require('./routes/missions');
 const rumorRoutes = require('./routes/rumors');
 const fileRoutes = require('./routes/files');
 const indexRoutes = require('./routes');
+const adminRoutes = require('./routes/admin');
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 const DEFAULT_PERSIST_ROOT = fs.existsSync('/var/data') ? '/var/data' : path.join(__dirname, '..');
@@ -115,6 +116,7 @@ app.use('/files', ensureAuthenticated, fileRoutes);
 app.use('/users', ensureAuthenticated, require('./routes/users'));
 app.use('/communications', ensureAuthenticated, require('./routes/communications'));
 app.use('/cipher', ensureAuthenticated, require('./routes/cipher'));
+app.use('/admin', ensureAuthenticated, adminRoutes);
 
 
 // Socket.io chat
