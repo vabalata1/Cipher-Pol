@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-async function migrateFromPostgresToSqlite() {
+async function migrateFromPostgresToSqlite(options = {}) {
   const pgUrl = process.env.DATABASE_URL;
   if (!pgUrl) {
     throw new Error('DATABASE_URL is required to migrate from Postgres');
@@ -20,6 +20,28 @@ async function migrateFromPostgresToSqlite() {
 
   const pool = new Pool({ connectionString: pgUrl, ssl: process.env.PGSSL === '0' ? false : { rejectUnauthorized: false } });
   const db = await open({ filename: path.join(dataDir, 'app.sqlite'), driver: sqlite3.Database });
+
+  const shouldWipe = options.wipe !== undefined ? !!options.wipe : process.env.MIGRATE_WIPE !== '0';
+  if (shouldWipe) {
+    await db.exec(`
+      PRAGMA foreign_keys = OFF;
+      DROP TABLE IF EXISTS mission_dependencies;
+      DROP TABLE IF EXISTS mission_binomes;
+      DROP TABLE IF EXISTS mission_attachments;
+      DROP TABLE IF EXISTS mission_priority_votes;
+      DROP TABLE IF EXISTS mission_assignments;
+      DROP TABLE IF EXISTS mission_milestones;
+      DROP TABLE IF EXISTS mission_responses;
+      DROP TABLE IF EXISTS missions;
+      DROP TABLE IF EXISTS direct_messages;
+      DROP TABLE IF EXISTS messages;
+      DROP TABLE IF EXISTS rumors;
+      DROP TABLE IF EXISTS files;
+      DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS app_settings;
+      PRAGMA foreign_keys = ON;
+    `);
+  }
 
   // Ensure schema exists
   await db.exec(`
@@ -130,7 +152,7 @@ async function migrateFromPostgresToSqlite() {
   await db.close();
   await pool.end();
 
-  return { totals, extracted, uploadDir, dataDir };
+  return { totals, extracted, uploadDir, dataDir, wiped: shouldWipe };
 }
 
 module.exports = { migrateFromPostgresToSqlite };
