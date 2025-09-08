@@ -7,7 +7,7 @@ async function migrateFromPostgresToSqlite(options = {}) {
     throw new Error('DATABASE_URL is required to migrate from Postgres');
   }
 
-  const dataRoot = fs.existsSync('/var/data') ? '/var/data' : path.join(__dirname, '..', '..');
+  const dataRoot = options.root || process.env.TARGET_ROOT || '/var/data';
   const dataDir = path.resolve(process.env.DATA_DIR || path.join(dataRoot, 'data'));
   const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataRoot, 'uploads'));
 

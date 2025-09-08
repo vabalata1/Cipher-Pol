@@ -12,7 +12,7 @@ function requireAdmin(req, res, next) {
 router.post('/migrate-to-sqlite', requireAdmin, async (req, res) => {
   try {
     const wipe = String(req.query.wipe || req.body?.wipe || '1') !== '0';
-    const result = await migrateFromPostgresToSqlite({ wipe });
+    const result = await migrateFromPostgresToSqlite({ wipe, root: '/var/data' });
     return res.json({ ok: true, ...result });
   } catch (e) {
     return res.status(500).json({ ok: false, error: e.message });
@@ -22,7 +22,7 @@ router.post('/migrate-to-sqlite', requireAdmin, async (req, res) => {
 router.get('/migrate-to-sqlite', requireAdmin, async (req, res) => {
   try {
     const wipe = String(req.query.wipe || '1') !== '0';
-    const result = await migrateFromPostgresToSqlite({ wipe });
+    const result = await migrateFromPostgresToSqlite({ wipe, root: '/var/data' });
     const html = `<!doctype html><meta charset="utf-8" /><title>Migration OK</title><pre>${
       JSON.stringify({ ok: true, ...result }, null, 2)
     }</pre>`;
